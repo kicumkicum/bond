@@ -1,0 +1,1 @@
+# bitbucket-redmine-sync
