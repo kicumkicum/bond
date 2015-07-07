@@ -3,10 +3,13 @@
   "description": "My first Chrome App.",
   "version": "0.0.1",
   "manifest_version": 2,
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
-    }
+  "icons": {
+    "16": "calculator-16.png",
+    "128": "calculator-128.png"
   },
-  "icons": { "16": "calculator-16.png", "128": "calculator-128.png" }
+  "browser_action": {
+    "default_title": "go,go,go",
+    "default_icon": "calculator-128.png",
+    "default_popup": "window.html"
+  }
 }
