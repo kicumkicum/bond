@@ -7,6 +7,9 @@
     "16": "icons/calculator-16.png",
     "128": "icons/calculator-128.png"
   },
+  "permissions": [
+    "tabs"
+  ],
   "browser_action": {
     "default_title": "go,go,go",
     "default_icon": "icons/calculator-128.png",
