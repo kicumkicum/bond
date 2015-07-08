@@ -1,7 +1,10 @@
 /**
  * Created by oleg on 08.07.15.
  */
-(setTimeout(function() {
+goog.require('goog.base');
+goog.require('Syncer');
+
+var init = function() {
 	var syncer = new Syncer;
 	var goto = function(url) {
 		location.href = url;
@@ -25,4 +28,6 @@
 		var url = syncer.getBitbucketPullRequestUrl();
 		goto(url);
 	});
-}, 2000))();
+};
+
+window.addEventListener('load', init);

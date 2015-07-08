@@ -1,13 +1,10 @@
-/**
- * Created by oleg on 08.07.15.
- */
-
+goog.provide('Syncer');
 
 
 /**
  * @constructor
  */
-Syncer = function() {
+var Syncer = function() {
 	this._url = '';
 };
 
@@ -40,11 +37,24 @@ Syncer.prototype.getBitbucketBranchUrl = function() {
  * @return {string}
  */
 Syncer.prototype.getBitbucketPullRequestUrl = function() {
-	return 'https://bitbucket.org';
+	return 'https://bitbucket.org/api/1.0/user/repositories/';
 };
 
+
+Syncer.prototype.setBitbucketToken = function(token) {
+	this._token.bitbucket = token;
+};
 
 /**
  * @type {string}
  */
 Syncer.prototype._url;
+
+
+/**
+ * @type {{
+ *      bitbucket: string,
+ *      redmine: string
+ * }}
+ */
+Syncer.prototype._token;
