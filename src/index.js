@@ -17,6 +17,12 @@
 		var url = syncer.getRedMineTicketUrl();
 		goto(url);
 	});
-	document.getElementById('bit-branch').innerHTML = Parser.getBranch(url);
-	document.getElementById('bit-pull').innerHTML = Parser.getPull(url);
+	document.getElementById('bit-branch').addEventListener('click', function() {
+		var url = syncer.getBitbucketBranchUrl();
+		goto(url);
+	});
+	document.getElementById('bit-pull').addEventListener('click', function() {
+		var url = syncer.getBitbucketPullRequestUrl();
+		goto(url);
+	});
 }, 2000))();
