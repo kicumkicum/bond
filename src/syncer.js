@@ -8,8 +8,9 @@ goog.require('utils.parser');
  */
 var Syncer = function() {
 	this._url = '';
-	this._api = {};
-	this._api.bitbucket = new api.Bitbucket;
+	this._api = {
+		bitbucket: new api.Bitbucket
+	};
 };
 
 
@@ -54,14 +55,24 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
 };
 
 
+/**
+ * @param {string} token
+ */
 Syncer.prototype.setBitbucketToken = function(token) {
 	this._token.bitbucket = token;
 };
+
 
 /**
  * @type {string}
  */
 Syncer.prototype._url;
+
+
+/**
+ * @type {string}
+ */
+Syncer.prototype._redmineTicket;
 
 
 /**
@@ -71,3 +82,11 @@ Syncer.prototype._url;
  * }}
  */
 Syncer.prototype._token;
+
+
+/**
+ * @type {{
+ *      bitbucket: api.Bitbucket
+ * }}
+ */
+Syncer.prototype._api;
