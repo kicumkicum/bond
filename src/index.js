@@ -1,11 +1,13 @@
 /**
  * Created by oleg on 08.07.15.
  */
-(setTimeout(function() {
+goog.require('goog.base');
+goog.require('Syncer');
+
+var init = function() {
 	var syncer = new Syncer;
 	var goto = function(url) {
-		location.href = url;
-		open(url);
+		window.open(url);
 	};
 
 	chrome.tabs.getSelected(function(tab) {
@@ -14,9 +16,18 @@
 	});
 
 	document.getElementById('redmine').addEventListener('click', function() {
-		var url = syncer.getRedMineTicketUrl();
+		syncer.getRedMineTicketUrl()
+			.then(goto);
+	});
+	document.getElementById('bit-branch').addEventListener('click', function() {
+		syncer.getBitbucketBranchUrl()
+			.then(goto);
 		goto(url);
 	});
-	document.getElementById('bit-branch').innerHTML = Parser.getBranch(url);
-	document.getElementById('bit-pull').innerHTML = Parser.getPull(url);
-}, 2000))();
+	document.getElementById('bit-pull').addEventListener('click', function() {
+		syncer.getBitbucketPullRequestUrl()
+			.then(goto);
+	});
+};
+
+window.addEventListener('load', init);
