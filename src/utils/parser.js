@@ -1,9 +1,9 @@
-/**
- * Created by oleg on 08.07.15.
- */
-Parser = {};
+goog.provide('utils.Parser');
 
-Parser.getTiket = function(url) {
+
+utils.Parser = function() {};
+
+utils.Parser.getTicket = function(url) {
 	var mask = 'dev.ifaced.ru/issues/';
 	var pos = url.indexOf(mask) + mask.length;
 	var ticket = '';
@@ -13,11 +13,10 @@ Parser.getTiket = function(url) {
 	return ticket;
 };
 
-Parser.getBranch = function(url) {
+utils.Parser.getBranch = function(url) {
 	return 'localhost';
 };
 
-Parser.getPull = function(url) {
-
+utils.Parser.getPull = function(url) {
 	return 'localhost';
 };
