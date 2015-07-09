@@ -21,7 +21,7 @@ goog.inherits(api.Bitbucket, api.AbstractApi);
  */
 api.Bitbucket.prototype.getPullRequests = function() {
 	var url = 'repositories/' + this._owner + '/' + this._repoSlug + '/pullrequests/?state=merged,open';
-	return this.request(url)
+	return this.request(url, {'Authorization': 'Basic a2ljdW1raWN1bToxMXpobG01'})
 		.then(function(response) {
 			var pulls = response['values'];
 			return pulls.map(function(pull) {
