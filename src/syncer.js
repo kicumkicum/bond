@@ -1,4 +1,6 @@
 goog.provide('Syncer');
+goog.require('api.Bitbucket');
+goog.require('utils.parser');
 
 
 /**
@@ -6,6 +8,8 @@ goog.provide('Syncer');
  */
 var Syncer = function() {
 	this._url = '';
+	this._api = {};
+	this._api.bitbucket = new api.Bitbucket;
 };
 
 
@@ -14,6 +18,7 @@ var Syncer = function() {
  */
 Syncer.prototype.setUrl = function(url) {
 	this._url = url;
+	this._redmineTicket = utils.parser.getTicket(url);
 };
 
 
@@ -34,10 +39,18 @@ Syncer.prototype.getBitbucketBranchUrl = function() {
 
 
 /**
- * @return {string}
+ * @return {IThenable.<string>}
  */
 Syncer.prototype.getBitbucketPullRequestUrl = function() {
-	return 'https://bitbucket.org/api/1.0/user/repositories/';
+	return this._api.bitbucket
+		.getPullRequests()
+		.then(function(pulls) {
+			var pullUrl = pulls.filter(function(pull) {
+				pull = /** @type {models.bitbucket.PullRequest} */(pull);
+				return pull.title.indexOf(this._redmineTicket) !== -1;
+			}, this);
+			return pullUrl[0].links.html.href;
+		}.bind(this));
 };
 
 
