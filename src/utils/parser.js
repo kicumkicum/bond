@@ -1,9 +1,9 @@
-goog.provide('utils.Parser');
+goog.provide('utils.parser');
 
 
-utils.Parser = function() {};
+utils.parser = {};
 
-utils.Parser.getTicket = function(url) {
+utils.parser.getTicket = function(url) {
 	var mask = 'dev.ifaced.ru/issues/';
 	var pos = url.indexOf(mask) + mask.length;
 	var ticket = '';
@@ -13,10 +13,10 @@ utils.Parser.getTicket = function(url) {
 	return ticket;
 };
 
-utils.Parser.getBranch = function(url) {
+utils.parser.getBranch = function(url) {
 	return 'localhost';
 };
 
-utils.Parser.getPull = function(url) {
+utils.parser.getPull = function(url) {
 	return 'localhost';
 };
