@@ -48,7 +48,8 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
 		.then(function(pulls) {
 			var pullUrl = pulls.filter(function(pull) {
 				pull = /** @type {models.bitbucket.PullRequest} */(pull);
-				return pull.title.indexOf(this._redmineTicket) !== -1;
+				return pull.title.indexOf(this._redmineTicket) !== -1 ||
+					pull.source.branch.name.indexOf(this._redmineTicket) !== -1;
 			}, this);
 			return pullUrl[0].links.html.href;
 		}.bind(this));
