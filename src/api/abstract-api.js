@@ -16,7 +16,6 @@ api.AbstractApi = function() {
  */
 api.AbstractApi.prototype.request = function(url, opt_headers) {
 	var xhr = new XMLHttpRequest();
-	url = this._url + url;
 
 	return new Promise(function(resolve, reject) {
 		xhr.onreadystatechange = this._onReadyStateChange.bind(this, xhr, resolve, reject);
