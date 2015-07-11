@@ -20,9 +20,10 @@ var init = function() {
 			.then(goto);
 	});
 	document.getElementById('bit-branch').addEventListener('click', function() {
-		syncer.getBitbucketBranchUrl()
-			.then(goto);
-		goto(url);
+		syncer.getBitbucketBranchUrl();
+			//.then(function(all) {
+				//console.log(all);
+			//});
 	});
 	document.getElementById('bit-pull').addEventListener('click', function() {
 		syncer.getBitbucketPullRequestUrl()
