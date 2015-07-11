@@ -17,6 +17,41 @@ api.Bitbucket = function() {
 goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
+api.Bitbucket.prototype.getBranches = function() {
+	var url = 'https://bitbucket.org/interfaced/persik.by/branches';
+
+	//window.open(url);
+	chrome.tabs.query({'url': url}, function(tab) {
+		console.log(arguments);
+		chrome.tabs.executeScript(tab[0].id, {code: 'var w = window; console.log(w);'});
+	})
+
+	//chrome.cookies.getAll({domain: 'bitbucket.org'}, function(cookies) {
+	//	console.log(cookies);
+	//	for (var i = 0; i < cookies.length; i++) {
+	//		var newCookie = {
+	//			'url': "http" + (cookies[i].secure ? "s" : "") + "://" + cookies[i].domain + cookies[i].path,
+	//			'name': cookies[i].name,
+	//			'value': cookies[i].value,
+	//			'domain': cookies[i].domain,
+	//			'path': cookies[i].path,
+	//			'secure': cookies[i].secure,
+	//			'httpOnly': cookies[i].httpOnly,
+	//			'expirationDate': cookies[i].expirationDate,
+	//			'storeId': cookies[i].storeId
+	//		};
+	//		chrome.cookies.set(newCookie);
+	//	}
+	//	return this.getHTML(url)
+	//		.then(function(html) {
+	//			console.log(html);
+	//			return this.getAllElementsWithAttribute('data-branch-name', doc);
+			//}.bind(this));
+	//}.bind(this));
+
+
+};
+
 /**
  * @return {IThenable.<models.bitbucket.PullRequest>}
  */
@@ -48,3 +83,5 @@ api.Bitbucket.prototype.getPullRequests = function() {
 
 	return request(url);
 };
+
+
