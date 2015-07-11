@@ -18,6 +18,7 @@ goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
 api.Bitbucket.prototype.getBranches = function() {
+	//todo http://stackoverflow.com/questions/11684454/getting-the-source-html-of-the-current-page-from-chrome-extension
 	var url = 'https://bitbucket.org/interfaced/persik.by/branches';
 
 	//window.open(url);
