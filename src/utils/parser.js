@@ -24,7 +24,7 @@ utils.parser.getBranchesFromHTML = function(html) {
 	var exp = /(?:data-branch-name=")(.*)(?:">)/g;
 
 	while (result = exp.exec(html)) {
-		textBlocks.push(result[0]);
+		textBlocks.push(result[1]);
 	}
 
 	return textBlocks;
