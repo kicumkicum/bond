@@ -18,14 +18,25 @@ goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
 api.Bitbucket.prototype.getBranches = function() {
+	var getBranches = function(tabId) {
+		chrome.tabs.executeScript(tabId, {file: "/src/utils/get-branches-from-page.js"}, function() {
+			// If you try and inject into an extensions page or the webstore/NTP you'll get an error
+			if (chrome.extension.lastError) {
+				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+				console.log('error', message);
+			}
+		});
+	};
+
 	//todo http://stackoverflow.com/questions/11684454/getting-the-source-html-of-the-current-page-from-chrome-extension
 	var url = 'https://bitbucket.org/interfaced/persik.by/branches';
 
 	//window.open(url);
-	chrome.tabs.query({'url': url}, function(tab) {
-		console.log(arguments);
-		chrome.tabs.executeScript(tab[0].id, {code: 'var w = window; console.log(w);'});
-	})
+	chrome.tabs.query({'url': url}, function(tabs) {
+		var result = getBranches(tabs[0].id);
+		console.log('result', result);
+		//chrome.tabs.executeScript(tab[0].id, {code: 'var w = window; console.log(w);'});
+	});
 
 	//chrome.cookies.getAll({domain: 'bitbucket.org'}, function(cookies) {
 	//	console.log(cookies);
