@@ -29,6 +29,12 @@ var init = function() {
 		syncer.getBitbucketPullRequestUrl()
 			.then(goto);
 	});
+
+	chrome.extension.onMessage.addListener(function(request, sender) {
+		if (request.action == "get-branches") {
+			console.log(request.source);
+		}
+	});
 };
 
 window.addEventListener('load', init);
