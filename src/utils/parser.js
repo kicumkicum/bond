@@ -38,3 +38,12 @@ utils.parser.getBranch = function(url) {
 utils.parser.getPull = function(url) {
 	return 'localhost';
 };
+
+
+/**
+ * @args {string}
+ * @return {string}
+ */
+utils.parser.joinUrl = function() {
+	return Array.prototype.join.call(arguments, '/').replace('//', '/');
+};
