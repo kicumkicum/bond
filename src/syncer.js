@@ -32,9 +32,9 @@ Syncer.prototype.getRedMineTicketUrl = function() {
 
 
 /**
- * @return {string}
+ * @return {Array.<models.bitbucket.Branch>}
  */
-Syncer.prototype.getBitbucketBranchesName = function() {
+Syncer.prototype.getBitbucketBranches = function() {
 	return this._api.bitbucket.getBranches();
 };
 
