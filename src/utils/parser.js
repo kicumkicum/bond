@@ -13,6 +13,24 @@ utils.parser.getTicket = function(url) {
 	return ticket;
 };
 
+
+/**
+ * @param {string} html
+ * @return {Array.<string>}
+ */
+utils.parser.getBranchesFromHTML = function(html) {
+	var result;
+	var textBlocks = [];
+	var exp = /(?:data-branch-name=")(.*)(?:">)/g;
+
+	while (result = exp.exec(html)) {
+		textBlocks.push(result[0]);
+	}
+
+	return textBlocks;
+};
+
+
 utils.parser.getBranch = function(url) {
 	return 'localhost';
 };
