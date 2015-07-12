@@ -47,3 +47,15 @@ utils.parser.getPull = function(url) {
 utils.parser.joinUrl = function() {
 	return Array.prototype.join.call(arguments, '/').replace('//', '/');
 };
+
+
+/**
+ * @param {string} url
+ * @return {string}
+ */
+utils.parser.findTicket = function(url) {
+	var exp = /(((pull-request|branch).*(hotfix|feature|release)\D*)([0-9]*))/;
+
+	var ticketExp = exp.exec(url);
+	return ticketExp && ticketExp[5];
+};
