@@ -46,8 +46,7 @@ api.AbstractApi.prototype._onReadyStateChange = function(xhr, resolve, reject) {
 			try {
 				resolve(JSON.parse(xhr.responseText));
 			} catch (e) {
-				var err1 = new Error(e.message + '\n' + xhr.responseText.length + '\n' + url);
-				reject(err1);
+				resolve(xhr.responseText);
 			}
 		} else {
 			var response;
@@ -63,4 +62,23 @@ api.AbstractApi.prototype._onReadyStateChange = function(xhr, resolve, reject) {
 			}
 		}
 	}
+};
+
+
+api.AbstractApi.prototype.getHTML = function(url) {
+	return this.request(url);
+};
+
+
+api.AbstractApi.prototype.getAllElementsWithAttribute = function(attribute, opt_context) {
+	var matchingElements = [];
+	var allElements = (opt_context || document).getElementsByTagName('*');
+
+	for (var i = 0, n = allElements.length; i < n; i++) {
+		if (allElements[i].getAttribute(attribute) !== null) {
+			matchingElements.push(allElements[i]);
+		}
+	}
+
+	return matchingElements;
 };
