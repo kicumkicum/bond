@@ -16,7 +16,6 @@ api.AbstractApi = function() {
  */
 api.AbstractApi.prototype.request = function(url, opt_headers) {
 	var xhr = new XMLHttpRequest();
-	url = this._url + url;
 
 	return new Promise(function(resolve, reject) {
 		xhr.onreadystatechange = this._onReadyStateChange.bind(this, xhr, resolve, reject);
@@ -47,8 +46,7 @@ api.AbstractApi.prototype._onReadyStateChange = function(xhr, resolve, reject) {
 			try {
 				resolve(JSON.parse(xhr.responseText));
 			} catch (e) {
-				var err1 = new Error(e.message + '\n' + xhr.responseText.length + '\n' + url);
-				reject(err1);
+				resolve(xhr.responseText);
 			}
 		} else {
 			var response;
@@ -64,4 +62,23 @@ api.AbstractApi.prototype._onReadyStateChange = function(xhr, resolve, reject) {
 			}
 		}
 	}
+};
+
+
+api.AbstractApi.prototype.getHTML = function(url) {
+	return this.request(url);
+};
+
+
+api.AbstractApi.prototype.getAllElementsWithAttribute = function(attribute, opt_context) {
+	var matchingElements = [];
+	var allElements = (opt_context || document).getElementsByTagName('*');
+
+	for (var i = 0, n = allElements.length; i < n; i++) {
+		if (allElements[i].getAttribute(attribute) !== null) {
+			matchingElements.push(allElements[i]);
+		}
+	}
+
+	return matchingElements;
 };

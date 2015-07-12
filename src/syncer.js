@@ -24,18 +24,25 @@ Syncer.prototype.setUrl = function(url) {
 
 
 /**
- * @return {string}
+ * @return {IThenable.<string>}
  */
 Syncer.prototype.getRedMineTicketUrl = function() {
-	return 'https://dev.ifaced.ru'
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.getSelected(function(tab) {
+			var tabUrl = tab.url;
+			var ticket = utils.parser.findTicket(tabUrl);
+			var ticketUrl = utils.parser.joinUrl('https://dev.ifaced.ru/issues', ticket);
+			resolve(ticketUrl);
+		});
+	});
 };
 
 
 /**
- * @return {string}
+ * @return {Array.<models.bitbucket.Branch>}
  */
-Syncer.prototype.getBitbucketBranchUrl = function() {
-	return 'https://bitbucket.org';
+Syncer.prototype.getBitbucketBranches = function() {
+	return this._api.bitbucket.getBranches();
 };
 
 
@@ -48,7 +55,8 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
 		.then(function(pulls) {
 			var pullUrl = pulls.filter(function(pull) {
 				pull = /** @type {models.bitbucket.PullRequest} */(pull);
-				return pull.title.indexOf(this._redmineTicket) !== -1;
+				return pull.title.indexOf(this._redmineTicket) !== -1 ||
+					pull.source.branch.name.indexOf(this._redmineTicket) !== -1;
 			}, this);
 			return pullUrl[0].links.html.href;
 		}.bind(this));

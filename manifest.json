@@ -1,7 +1,7 @@
 {
   "name": "Bitbucket-Redmine-Sync",
   "description": "My first Chrome App.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 2,
   "icons": {
     "16": "icons/calculator-16.png",
@@ -9,7 +9,8 @@
   },
   "permissions": [
     "tabs",
-    "http://*/"
+    "http://*/",
+    "https://*/"
   ],
   "browser_action": {
     "default_title": "go,go,go",
