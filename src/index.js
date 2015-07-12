@@ -20,7 +20,7 @@ var init = function() {
 			.then(goto);
 	});
 	document.getElementById('bit-branch').addEventListener('click', function() {
-		syncer.getBitbucketBrancesName();
+		syncer.getBitbucketBranchesName();
 			//.then(function(all) {
 				//console.log(all);
 			//});
