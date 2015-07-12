@@ -46,8 +46,7 @@ api.AbstractApi.prototype._onReadyStateChange = function(xhr, resolve, reject) {
 			try {
 				resolve(JSON.parse(xhr.responseText));
 			} catch (e) {
-				var err1 = new Error(e.message + '\n' + xhr.responseText.length + '\n' + url);
-				reject(err1);
+				resolve(xhr.responseText);
 			}
 		} else {
 			var response;
