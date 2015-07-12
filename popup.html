@@ -5,16 +5,22 @@
 		<script src="/src/models/bitbucket/links.js"></script>
 		<script src="/src/models/bitbucket/repository.js"></script>
 		<script src="/src/models/bitbucket/pull-request.js"></script>
+		<script src="/src/models/bitbucket/branch.js"></script>
+		<script src="/src/utils/parser.js"></script>
 		<script src="/src/api/abstract-api.js"></script>
 		<script src="/src/api/bitbucket-api.js"></script>
-		<script src="/src/utils/parser.js"></script>
 		<script src="/src/syncer.js"></script>
 		<script src="/src/popup.js"></script>
 		<script src="/src/index.js"></script>
 	</head>
-	<body style="width: 80px;">
-		<div id="redmine">goto redmine</div>
-		<div id="bit-branch">goto branch</div>
-		<div id="bit-pull">goto pull</div>
+	<body style="width: 150px;">
+		<div id="task-list">
+			<div id="redmine">goto redmine</div>
+			<div id="bit-branch">goto branch</div>
+			<div id="bit-pull">goto pull</div>
+		</div>
+		<ul id="content" style="display: none;">
+			<li id="back">back</li>
+		</ul>
 	</body>
 </html>
