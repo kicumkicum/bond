@@ -9,6 +9,7 @@
   },
   "permissions": [
     "tabs",
+    "storage",
     "http://*/",
     "https://*/"
   ],
@@ -16,5 +17,6 @@
     "default_title": "go,go,go",
     "default_icon": "icons/calculator-128.png",
     "default_popup": "popup.html"
-  }
+  },
+  "options_page": "options.html"
 }
