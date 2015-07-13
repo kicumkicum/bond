@@ -3,6 +3,7 @@ goog.require('api.Bitbucket');
 goog.require('utils.parser');
 
 
+
 /**
  * @constructor
  */
@@ -68,6 +69,14 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
  */
 Syncer.prototype.setBitbucketToken = function(token) {
 	this._token.bitbucket = token;
+};
+
+
+/**
+ * @return {Promise.<string>}
+ */
+Syncer.prototype.getRedmineProjectId = function() {
+	return utils.parser.redmine.getProjectId();
 };
 
 

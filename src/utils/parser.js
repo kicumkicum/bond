@@ -2,6 +2,7 @@ goog.provide('utils.parser');
 
 
 utils.parser = {};
+utils.parser.redmine = {};
 
 utils.parser.getTicket = function(url) {
 	var mask = 'dev.ifaced.ru/issues/';
@@ -58,4 +59,28 @@ utils.parser.findTicket = function(url) {
 
 	var ticketExp = exp.exec(url);
 	return ticketExp && ticketExp[5];
+};
+
+
+/**
+ * @return {Promise.<string>}
+ */
+utils.parser.redmine.getProjectId = function() {
+	return new Promise(function(resolve, reject) {
+		var listener = function(request, sender) {
+			if (request.action === 'get-redmine-project-id') {
+				chrome.extension.onMessage.removeListener(listener);
+				resolve(request.source);
+			}
+		};
+
+		chrome.extension.onMessage.addListener(listener);
+		chrome.tabs.executeScript(null, {file: "/src/utils/get-redmine-project-id.js"}, function() {
+			if (chrome.extension.lastError) {
+				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+				chrome.extension.onMessage.removeListener(listener);
+				reject('error:', message);
+			}
+		});
+	});
 };
