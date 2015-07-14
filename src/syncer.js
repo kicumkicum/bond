@@ -12,6 +12,8 @@ var Syncer = function() {
 	this._api = {
 		bitbucket: new api.Bitbucket
 	};
+
+	this._init();
 };
 
 
@@ -77,6 +79,21 @@ Syncer.prototype.setBitbucketToken = function(token) {
  */
 Syncer.prototype.getRedmineProjectId = function() {
 	return utils.parser.redmine.getProjectId();
+};
+
+
+Syncer.prototype._init = function() {
+	chrome.storage.sync.get(null, function(items) {
+		var settings = JSON.parse(items.settings);
+
+		Object.keys(settings).forEach(function(el, i) {
+			this._api.bitbucket.setOwner(el);
+
+			for (var prop in settings[el]) {
+				this._api.bitbucket.setRepo(settings[el][prop]);
+			}
+		}, this);
+	}.bind(this));
 };
 
 

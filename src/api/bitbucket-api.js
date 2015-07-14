@@ -114,4 +114,34 @@ api.Bitbucket.prototype.getPullRequests = function() {
 };
 
 
-;
+/**
+ * @param {string} owner
+ */
+api.Bitbucket.prototype.setOwner = function(owner) {
+	this._owner = owner;
+};
+
+
+/**
+ * @return {string}
+ */
+api.Bitbucket.prototype.getOwner = function() {
+	return this._owner;
+};
+
+
+/**
+ * @param {string} repo
+ */
+api.Bitbucket.prototype.setRepo = function(repo) {
+	this._repo = repo;
+};
+
+
+/**
+ * @return {string}
+ */
+api.Bitbucket.prototype.getRepo = function() {
+	return this._repo;
+};
+
