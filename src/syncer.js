@@ -18,6 +18,13 @@ var Syncer = function() {
 
 
 /**
+ */
+Syncer.prototype.goToRedmineTicket = function() {
+	this.getRedMineTicketUrl().then(this._goto.bind(this));
+};
+
+
+/**
  * @param {string} url
  */
 Syncer.prototype.setUrl = function(url) {
@@ -67,6 +74,22 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
 
 
 /**
+ * @return {IThenable.<Array.<models.bitbucket.PullRequest>>}
+ */
+Syncer.prototype.getBitbucketPullRequests = function() {
+	return this._api.bitbucket
+		.getPullRequests()
+		.then(function(pulls) {
+			return pulls.filter(function(pull) {
+				var isTargetPullRequest = pull.title.indexOf(this._redmineTicket) !== -1;
+				var isTargetBranch = pull.source.branch.name.indexOf(this._redmineTicket) !== -1;
+				return isTargetPullRequest || isTargetBranch;
+			}, this);
+		}.bind(this));
+};
+
+
+/**
  * @param {string} token
  */
 Syncer.prototype.setBitbucketToken = function(token) {
@@ -94,6 +117,15 @@ Syncer.prototype._init = function() {
 			}
 		}, this);
 	}.bind(this));
+};
+
+
+/**
+ * @param {string} url
+ * @protected
+ */
+Syncer.prototype._goto = function(url) {
+	window.open(url);
 };
 
 
