@@ -16,23 +16,15 @@ var Syncer = function(url) {
 		bitbucket: new api.Bitbucket
 	};
 
-	this.preload();
+	this.load();
 };
+goog.inherits(Syncer, EventEmitter);
 
 
 /**
  */
 Syncer.prototype.goToRedmineTicket = function() {
 	this.getRedMineTicketUrl().then(this._goto.bind(this));
-};
-
-
-/**
- * @param {string} url
- */
-Syncer.prototype.setUrl = function(url) {
-	this._url = url;
-	this._redmineTicket = utils.parser.getTicket(url);
 };
 
 
@@ -108,29 +100,73 @@ Syncer.prototype.getRedmineProjectId = function() {
 };
 
 
-Syncer.prototype.preload = function() {
-	utils.parser.redmine
-		.getProjectId()
-		.then(function(redmineId) {
-			this._redmineId = redmineId;
+/**
+ */
+Syncer.prototype.load = function() {
+	this.getCurrentUrl()
+		.then(function(url) {
+			this._url = url;
+			this._redmineTicket = utils.parser.getTicket(url);
 		}.bind(this))
 		.then(function() {
-			chrome.storage.sync.get(null, function(items) {
-				var settings = JSON.parse(items.settings);
-				for (var owner in settings) if (settings.hasOwnProperty(owner)) {
-					for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
-						if (redmineId === this._redmineId) {
-							this._bitbucketRepo = settings[owner][redmineId];
-							break;
-						}
-					}
-					if (this._bitbucketRepo) {
-						this._owner = owner;
-						break;
-					}
-				}
-			}.bind(this));
+			if (this.isRedmine()) {
+				return utils.parser.redmine
+					.getProjectId()
+					.then(function(redmineId) {
+						this._redmineId = redmineId;
+					}.bind(this))
+					.then(function() {
+						chrome.storage.sync.get(null, function(items) {
+							var settings = JSON.parse(items.settings);
+							for (var owner in settings) if (settings.hasOwnProperty(owner)) {
+								for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
+									if (redmineId === this._redmineId) {
+										this._bitbucketRepo = settings[owner][redmineId];
+										break;
+									}
+								}
+								if (this._bitbucketRepo) {
+									this._owner = owner;
+									break;
+								}
+							}
+						}.bind(this));
+					}.bind(this));
+			} else {
+				return Promise.resolve();
+			}
+		}.bind(this))
+		.then(function() {
+			this.emit('load');
 		}.bind(this));
+};
+
+
+/**
+ * @return {Promise}
+ */
+Syncer.prototype.getCurrentUrl = function() {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.getSelected(function(tab) {
+			tab.url ? resolve(tab.url) : reject('no-url');
+		});
+	});
+};
+
+
+/**
+ * @return {boolean}
+ */
+Syncer.prototype.isBitbucket = function() {
+	return this._url.indexOf('https://bitbucket.org') !== -1 || this._url.indexOf('http://bitbucket.org') !== -1;
+};
+
+
+/**
+ * @return {boolean}
+ */
+Syncer.prototype.isRedmine = function() {
+	return this._url.indexOf('https://dev.ifaced.ru') !== -1 || this._url.indexOf('http://dev.ifaced.ru') !== -1;
 };
 
 
