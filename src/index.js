@@ -37,25 +37,21 @@ var goto = function(url) {
 
 var init = function() {
 	var syncer = new Syncer;
-
-	chrome.tabs.getSelected(function(tab) {
-		var url = tab.url;
-		syncer.setUrl(url);
+	syncer.on('load', function() {
+		document.getElementById('redmine').onclick = syncer.goToRedmineTicket.bind(syncer);
+		document.getElementById('bit-pull').onclick = function() {
+			syncer.getBitbucketPullRequests().then(function(pulls) {
+				if (pulls.length === 1) {
+					goto(pulls[0].links.html.href);
+				} else {
+					showList(pulls);
+				}
+			});
+		};
+		document.getElementById('bit-branch').onclick = function() {
+			syncer.getBitbucketBranches().then(showList);
+		};
 	});
-
-	document.getElementById('redmine').onclick = syncer.goToRedmineTicket.bind(syncer);
-	document.getElementById('bit-pull').onclick = function() {
-		syncer.getBitbucketPullRequests().then(function(pulls) {
-			if (pulls.length === 1) {
-				goto(pulls[0].links.html.href);
-			} else {
-				showList(pulls);
-			}
-		});
-	};
-	document.getElementById('bit-branch').onclick = function() {
-		syncer.getBitbucketBranches().then(showList);
-	};
 
 	chrome.extension.onMessage.addListener(function(request, sender) {
 		if (request.action == "get-branches") {
