@@ -7,13 +7,16 @@ goog.require('utils.parser');
 /**
  * @constructor
  */
-var Syncer = function() {
-	this._url = '';
+var Syncer = function(url) {
+	this._url = url;
+	this._owner = null;
+	this._redmineId = null;
+	this._redmineTicket = null;
 	this._api = {
 		bitbucket: new api.Bitbucket
 	};
 
-	this._init();
+	this.preload();
 };
 
 
@@ -105,18 +108,33 @@ Syncer.prototype.getRedmineProjectId = function() {
 };
 
 
-Syncer.prototype._init = function() {
-	chrome.storage.sync.get(null, function(items) {
-		var settings = JSON.parse(items.settings);
+Syncer.prototype.preload = function() {
+	utils.parser.redmine
+		.getProjectId()
+		.then(function(redmineId) {
+			this._redmineId = redmineId;
+		}.bind(this))
+		.then(function() {
+			chrome.storage.sync.get(null, function(items) {
+				var settings = JSON.parse(items.settings);
+				for (var owner in settings) if (settings.hasOwnProperty(owner)) {
+					for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
+						if (redmineId === this._redmineId) {
+							this._bitbucketRepo = settings[owner][redmineId];
+							break;
+						}
+					}
+					if (this._bitbucketRepo) {
+						this._owner = owner;
+						break;
+					}
+				}
+				if (this._bitbucketRepo && this._owner) {
+					this._api.bitbucket.setOwner(this._owner);
 
-		Object.keys(settings).forEach(function(el, i) {
-			this._api.bitbucket.setOwner(el);
-
-			for (var prop in settings[el]) {
-				this._api.bitbucket.setRepo(settings[el][prop]);
-			}
-		}, this);
-	}.bind(this));
+				}
+			}.bind(this));
+		}.bind(this));
 };
 
 
