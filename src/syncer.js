@@ -52,10 +52,10 @@ Syncer.prototype.getRedMineTicketUrl = function() {
 
 
 /**
- * @return {Array.<models.bitbucket.Branch>}
+ * @return {IThenable.<Array.<models.bitbucket.Branch>>}
  */
 Syncer.prototype.getBitbucketBranches = function() {
-	return this._api.bitbucket.getBranches();
+	return this._api.bitbucket.getBranches(this._owner, this._bitbucketRepo);
 };
 
 
@@ -64,7 +64,7 @@ Syncer.prototype.getBitbucketBranches = function() {
  */
 Syncer.prototype.getBitbucketPullRequestUrl = function() {
 	return this._api.bitbucket
-		.getPullRequests()
+		.getPullRequests(this._owner, this._bitbucketRepo)
 		.then(function(pulls) {
 			var pullUrl = pulls.filter(function(pull) {
 				pull = /** @type {models.bitbucket.PullRequest} */(pull);
@@ -81,7 +81,7 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
  */
 Syncer.prototype.getBitbucketPullRequests = function() {
 	return this._api.bitbucket
-		.getPullRequests()
+		.getPullRequests(this._owner, this._bitbucketRepo)
 		.then(function(pulls) {
 			return pulls.filter(function(pull) {
 				var isTargetPullRequest = pull.title.indexOf(this._redmineTicket) !== -1;
@@ -129,10 +129,6 @@ Syncer.prototype.preload = function() {
 						break;
 					}
 				}
-				if (this._bitbucketRepo && this._owner) {
-					this._api.bitbucket.setOwner(this._owner);
-
-				}
 			}.bind(this));
 		}.bind(this));
 };
@@ -157,6 +153,18 @@ Syncer.prototype._url;
  * @type {string}
  */
 Syncer.prototype._redmineTicket;
+
+
+/**
+ * @type {string}
+ */
+Syncer.prototype._bitbucketRepo;
+
+
+/**
+ * @type {string}
+ */
+Syncer.prototype._owner;
 
 
 /**
