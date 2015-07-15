@@ -1,0 +1,3 @@
+[submodule "ext-src/EventEmitter"]
+	path = ext-src/EventEmitter
+	url = git://github.com/Wolfy87/EventEmitter.git

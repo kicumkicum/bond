@@ -12,15 +12,18 @@ goog.require('utils.parser');
 api.Bitbucket = function() {
 	this._url = 'https://bitbucket.org/api/2.0/';
 	this._realUrl = 'https://bitbucket.org';
-	this._owner = 'interfaced';
-	this._repoSlug = 'persik.by';
 	this._maxPageLength = 50;
 
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
-api.Bitbucket.prototype.getBranches = function() {
+/**
+ * @param {string} owner
+ * @param {string} repo
+ * @return {IThenable.<Array.<models.bitbucket.Branch>>}
+ */
+api.Bitbucket.prototype.getBranches = function(owner, repo) {
 	var getBranches = function(tabId) {
 		chrome.tabs.executeScript(tabId, {file: "/src/utils/get-branches-from-page.js"}, function() {
 			if (chrome.extension.lastError) {
@@ -31,7 +34,7 @@ api.Bitbucket.prototype.getBranches = function() {
 	};
 
 	//todo http://stackoverflow.com/questions/11684454/getting-the-source-html-of-the-current-page-from-chrome-extension
-	var url = utils.parser.joinUrl(this._realUrl, this._owner, this._repoSlug, 'branches');
+	var url = utils.parser.joinUrl(this._realUrl, owner, repo, 'branches');
 
 	//window.open(url);
 	//chrome.tabs.query({'url': url}, function(tabs) {
@@ -44,7 +47,7 @@ api.Bitbucket.prototype.getBranches = function() {
 		})
 		.then(function(branchesNames) {
 			return branchesNames.map(function(branchName) {
-				var url = utils.parser.joinUrl(this._realUrl, this._owner, this._repoSlug, 'branch', branchName);
+				var url = utils.parser.joinUrl(this._realUrl, owner, repo, 'branch', branchName);
 				return new models.bitbucket.Branch({
 					name: branchName,
 					links: {
@@ -84,8 +87,8 @@ api.Bitbucket.prototype.getBranches = function() {
 /**
  * @return {IThenable.<models.bitbucket.PullRequest>}
  */
-api.Bitbucket.prototype.getPullRequests = function() {
-	var url = this._url + 'repositories/' + this._owner + '/' + this._repoSlug + '/pullrequests/?state=merged,open' +
+api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
+	var url = this._url + 'repositories/' + owner + '/' + repo + '/pullrequests/?state=merged,open' +
 		'&pagelen=' + this._maxPageLength;
 	var pulls = [];
 	var httpHeader = {'Authorization': 'Basic a2ljdW1raWN1bToxMXpobG01'};
@@ -112,36 +115,3 @@ api.Bitbucket.prototype.getPullRequests = function() {
 
 	return request(url);
 };
-
-
-/**
- * @param {string} owner
- */
-api.Bitbucket.prototype.setOwner = function(owner) {
-	this._owner = owner;
-};
-
-
-/**
- * @return {string}
- */
-api.Bitbucket.prototype.getOwner = function() {
-	return this._owner;
-};
-
-
-/**
- * @param {string} repo
- */
-api.Bitbucket.prototype.setRepo = function(repo) {
-	this._repo = repo;
-};
-
-
-/**
- * @return {string}
- */
-api.Bitbucket.prototype.getRepo = function() {
-	return this._repo;
-};
-
