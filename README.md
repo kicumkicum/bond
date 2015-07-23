@@ -9,12 +9,12 @@
 ```json
 {
   "owner": {
-    "redmine-project-id":"bitbucket-branch",
-    "redmine-project-id-2":"bitbucket-branch-4"
+    "redmine-project-id":"bitbucket-repo",
+    "redmine-project-id-2":"bitbucket-repo-4"
   },
   "owner-2": {
-    "redmine-project-id-3":"bitbucket-branch-3",
-    "redmine-project-id-4":"bitbucket-branch-4"
+    "redmine-project-id-3":"bitbucket-repo-3",
+    "redmine-project-id-4":"bitbucket-repo-4"
   }
 }
 ```
