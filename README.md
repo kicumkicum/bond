@@ -4,7 +4,7 @@
 
 * склонируйте репозиторий
 * выполните
-* 
+
 <pre><code>
 $ git submodule init
 $ git submodule update
