@@ -1,5 +1,6 @@
 goog.provide('api.Bitbucket');
 goog.require('api.AbstractApi');
+goog.require('config');
 goog.require('models.bitbucket.Branch');
 goog.require('models.bitbucket.PullRequest');
 goog.require('utils.parser');
@@ -91,7 +92,7 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 	var url = this._url + 'repositories/' + owner + '/' + repo + '/pullrequests/?state=merged,open' +
 		'&pagelen=' + this._maxPageLength;
 	var pulls = [];
-	var httpHeader = {'Authorization': 'Basic a2ljdW1raWN1bToxMXpobG01'};
+	var httpHeader = {'Authorization': 'Basic ' + config.token};
 
 	var request = function(url) {
 		return this
