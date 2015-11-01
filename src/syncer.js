@@ -118,7 +118,7 @@ Syncer.prototype.load = function() {
 					}.bind(this))
 					.then(function() {
 						chrome.storage.sync.get(null, function(items) {
-							var settings = JSON.parse(items.settings);
+							var settings = JSON.parse(items.settings.sync);
 							for (var owner in settings) if (settings.hasOwnProperty(owner)) {
 								for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
 									if (redmineId === this._redmineId) {
