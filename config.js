@@ -2,8 +2,13 @@ goog.provide('config');
 
 
 config = {
-	token: 'whcVmNbTTrGykRJt5v',
+	token: '',
 	redmine: {
-		host: 'dev.ifaced.ru'
+		host: ''
 	}
 };
+
+chrome.storage.sync.get(null, function(items) {
+	config.token = items.settings.token;
+	config.redmine.host = items.settings.redmineHost;
+});
