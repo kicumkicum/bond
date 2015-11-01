@@ -1,5 +1,6 @@
 goog.provide('Syncer');
 goog.require('api.Bitbucket');
+goog.require('config');
 goog.require('utils.parser');
 
 
@@ -36,7 +37,7 @@ Syncer.prototype.getRedMineTicketUrl = function() {
 		chrome.tabs.getSelected(function(tab) {
 			var tabUrl = tab.url;
 			var ticket = utils.parser.findTicket(tabUrl);
-			var ticketUrl = utils.parser.joinUrl('https://dev.ifaced.ru/issues', ticket);
+			var ticketUrl = utils.parser.joinUrl('https://' + config.redmine.host, 'issues', ticket);
 			resolve(ticketUrl);
 		});
 	});
@@ -166,7 +167,7 @@ Syncer.prototype.isBitbucket = function() {
  * @return {boolean}
  */
 Syncer.prototype.isRedmine = function() {
-	return this._url.indexOf('https://dev.ifaced.ru') !== -1 || this._url.indexOf('http://dev.ifaced.ru') !== -1;
+	return this._url.indexOf('https://' + config.redmine.host) !== -1 || this._url.indexOf('http://' + config.redmine.host) !== -1;
 };
 
 

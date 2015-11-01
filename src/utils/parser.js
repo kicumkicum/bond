@@ -1,11 +1,12 @@
 goog.provide('utils.parser');
+goog.require('config');
 
 
 utils.parser = {};
 utils.parser.redmine = {};
 
 utils.parser.getTicket = function(url) {
-	var mask = 'dev.ifaced.ru/issues/';
+	var mask = config.redmine.host + '/issues/';
 	var pos = url.indexOf(mask) + mask.length;
 	var ticket = '';
 	if (url.indexOf(mask) !== 0) {
