@@ -2,5 +2,8 @@ goog.provide('config');
 
 
 config = {
-	token: ''
+	token: 'whcVmNbTTrGykRJt5v',
+	redmine: {
+		url: 'https://dev.ifaced.ru/'
+	}
 };
