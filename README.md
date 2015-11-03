@@ -29,7 +29,7 @@ $ git submodule update
 }
 ```
 * получение bitbucket-токена
-![image](docs/img/bitbucket-token-0.png)
-![image](docs/img/bitbucket-token-1.png)
-![image](docs/img/bitbucket-token-2.png)
-![image](docs/img/bitbucket-token-3.png)
+* ![image](docs/img/bitbucket-token-0.png)
+* ![image](docs/img/bitbucket-token-1.png)
+* ![image](docs/img/bitbucket-token-2.png)
+* ![image](docs/img/bitbucket-token-3.png)
