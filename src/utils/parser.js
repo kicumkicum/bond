@@ -76,7 +76,7 @@ utils.parser.redmine.getProjectId = function() {
 		};
 
 		chrome.extension.onMessage.addListener(listener);
-		chrome.tabs.executeScript(null, {file: "/src/utils/get-redmine-project-id.js"}, function() {
+		chrome.tabs.executeScript(null, {file: "/src/injections/get-redmine-project-id.js"}, function() {
 			if (chrome.extension.lastError) {
 				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
 				chrome.extension.onMessage.removeListener(listener);
