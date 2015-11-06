@@ -1,4 +1,4 @@
-goog.provide('Syncer');
+goog.provide('service.Syncer');
 goog.require('api.Bitbucket');
 goog.require('config');
 goog.require('utils.parser');
@@ -8,7 +8,7 @@ goog.require('utils.parser');
 /**
  * @constructor
  */
-var Syncer = function(url) {
+service.Syncer = function(url) {
 	this._url = url;
 	this._owner = null;
 	this._redmineId = null;
@@ -19,12 +19,12 @@ var Syncer = function(url) {
 
 	this.load();
 };
-goog.inherits(Syncer, EventEmitter);
+goog.inherits(service.Syncer, EventEmitter);
 
 
 /**
  */
-Syncer.prototype.goToRedmineTicket = function() {
+service.Syncer.prototype.goToRedmineTicket = function() {
 	this.getRedMineTicketUrl().then(this._goto.bind(this));
 };
 
@@ -32,7 +32,7 @@ Syncer.prototype.goToRedmineTicket = function() {
 /**
  * @return {IThenable.<string>}
  */
-Syncer.prototype.getRedMineTicketUrl = function() {
+service.Syncer.prototype.getRedMineTicketUrl = function() {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.getSelected(function(tab) {
 			var tabUrl = tab.url;
@@ -47,7 +47,7 @@ Syncer.prototype.getRedMineTicketUrl = function() {
 /**
  * @return {IThenable.<Array.<models.bitbucket.Branch>>}
  */
-Syncer.prototype.getBitbucketBranches = function() {
+service.Syncer.prototype.getBitbucketBranches = function() {
 	return this._api.bitbucket.getBranches(this._owner, this._bitbucketRepo);
 };
 
@@ -55,7 +55,7 @@ Syncer.prototype.getBitbucketBranches = function() {
 /**
  * @return {IThenable.<string>}
  */
-Syncer.prototype.getBitbucketPullRequestUrl = function() {
+service.Syncer.prototype.getBitbucketPullRequestUrl = function() {
 	return this._api.bitbucket
 		.getPullRequests(this._owner, this._bitbucketRepo)
 		.then(function(pulls) {
@@ -72,7 +72,7 @@ Syncer.prototype.getBitbucketPullRequestUrl = function() {
 /**
  * @return {IThenable.<Array.<models.bitbucket.PullRequest>>}
  */
-Syncer.prototype.getBitbucketPullRequests = function() {
+service.Syncer.prototype.getBitbucketPullRequests = function() {
 	return this._api.bitbucket
 		.getPullRequests(this._owner, this._bitbucketRepo)
 		.then(function(pulls) {
@@ -88,7 +88,7 @@ Syncer.prototype.getBitbucketPullRequests = function() {
 /**
  * @param {string} token
  */
-Syncer.prototype.setBitbucketToken = function(token) {
+service.Syncer.prototype.setBitbucketToken = function(token) {
 	this._token.bitbucket = token;
 };
 
@@ -96,14 +96,14 @@ Syncer.prototype.setBitbucketToken = function(token) {
 /**
  * @return {Promise.<string>}
  */
-Syncer.prototype.getRedmineProjectId = function() {
+service.Syncer.prototype.getRedmineProjectId = function() {
 	return utils.parser.redmine.getProjectId();
 };
 
 
 /**
  */
-Syncer.prototype.load = function() {
+service.Syncer.prototype.load = function() {
 	this.getCurrentUrl()
 		.then(function(url) {
 			this._url = url;
@@ -146,7 +146,7 @@ Syncer.prototype.load = function() {
 /**
  * @return {Promise}
  */
-Syncer.prototype.getCurrentUrl = function() {
+service.Syncer.prototype.getCurrentUrl = function() {
 	return new Promise(function(resolve, reject) {
 		chrome.tabs.getSelected(function(tab) {
 			tab.url ? resolve(tab.url) : reject('no-url');
@@ -158,7 +158,7 @@ Syncer.prototype.getCurrentUrl = function() {
 /**
  * @return {boolean}
  */
-Syncer.prototype.isBitbucket = function() {
+service.Syncer.prototype.isBitbucket = function() {
 	return this._url.indexOf('https://bitbucket.org') !== -1 || this._url.indexOf('http://bitbucket.org') !== -1;
 };
 
@@ -166,7 +166,7 @@ Syncer.prototype.isBitbucket = function() {
 /**
  * @return {boolean}
  */
-Syncer.prototype.isRedmine = function() {
+service.Syncer.prototype.isRedmine = function() {
 	return this._url.indexOf('https://' + config.redmine.host) !== -1 || this._url.indexOf('http://' + config.redmine.host) !== -1;
 };
 
@@ -175,7 +175,7 @@ Syncer.prototype.isRedmine = function() {
  * @param {string} url
  * @protected
  */
-Syncer.prototype._goto = function(url) {
+service.Syncer.prototype._goto = function(url) {
 	window.open(url);
 };
 
@@ -183,25 +183,25 @@ Syncer.prototype._goto = function(url) {
 /**
  * @type {string}
  */
-Syncer.prototype._url;
+service.Syncer.prototype._url;
 
 
 /**
  * @type {string}
  */
-Syncer.prototype._redmineTicket;
+service.Syncer.prototype._redmineTicket;
 
 
 /**
  * @type {string}
  */
-Syncer.prototype._bitbucketRepo;
+service.Syncer.prototype._bitbucketRepo;
 
 
 /**
  * @type {string}
  */
-Syncer.prototype._owner;
+service.Syncer.prototype._owner;
 
 
 /**
@@ -210,7 +210,7 @@ Syncer.prototype._owner;
  *      redmine: string
  * }}
  */
-Syncer.prototype._token;
+service.Syncer.prototype._token;
 
 
 /**
@@ -218,4 +218,4 @@ Syncer.prototype._token;
  *      bitbucket: api.Bitbucket
  * }}
  */
-Syncer.prototype._api;
+service.Syncer.prototype._api;
