@@ -20,8 +20,12 @@ var Application = function() {
 };
 
 
-Application.prototype.addTab = function(tab) {
-	var url = tab.url;
+/**
+ * @param {*} chromeTab
+ * @return {IThenable.<Application.TabData>}
+ */
+Application.prototype.addTab = function(chromeTab) {
+	var url = chromeTab.url;
 
 	return Promise.all([
 		this.getPullRequests.bind(this, url),
@@ -45,9 +49,7 @@ Application.prototype.addTab = function(tab) {
  * @return {IThenable.<Array.<>>}
  */
 Application.prototype.getPullRequests = function(redmineUrl) {
-	return new Promise(function(resolve, reject) {
-
-	});
+	return this._services.syncer.getBitbucketPullRequests(redmineUrl);
 };
 
 
@@ -56,9 +58,7 @@ Application.prototype.getPullRequests = function(redmineUrl) {
  * @return {IThenable.<Array.<>>}
  */
 Application.prototype.getBranches = function(redmineUrl) {
-	return new Promise(function(resolve, reject) {
-
-	});
+	return this._services.syncer.getBitbucketBranches(redmineUrl);
 };
 
 
@@ -67,9 +67,7 @@ Application.prototype.getBranches = function(redmineUrl) {
  * @return {IThenable.<string>}
  */
 Application.prototype.getRedmineTicket = function(bitbucketUrl) {
-	return new Promise(function(resolve, reject) {
-
-	});
+	return this._services.syncer.getRedMineTicketUrl(bitbucketUrl);
 };
 
 
