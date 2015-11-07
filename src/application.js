@@ -8,8 +8,12 @@ goog.require('provider.Settings');
  * @constructor
  */
 var Application = function() {
+	this._providers = {
+		settings: new provider.Settings
+	};
+
 	this._services = {
-		syncer: new service.Syncer
+		syncer: new service.Syncer(this._providers.settings)
 	};
 
 	this._init();
@@ -97,6 +101,14 @@ Application.prototype._tabs;
  * }}
  */
 Application.prototype._services;
+
+
+/**
+ * @type {{
+ *      settings: provider.Settings
+ * }}
+ */
+Application.prototype._providers;
 
 
 /**
