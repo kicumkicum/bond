@@ -5,12 +5,16 @@ goog.require('config');
 utils.parser = {};
 utils.parser.redmine = {};
 
-utils.parser.getTicket = function(url) {
+/**
+ * @param {string} redmineUrl
+ * @return {string}
+ */
+utils.parser.getTicket = function(redmineUrl) {
 	var mask = config.redmine.host + '/issues/';
-	var pos = url.indexOf(mask) + mask.length;
+	var pos = redmineUrl.indexOf(mask) + mask.length;
 	var ticket = '';
-	if (url.indexOf(mask) !== 0) {
-		ticket = url.substr(pos);
+	if (redmineUrl.indexOf(mask) !== 0) {
+		ticket = redmineUrl.substr(pos);
 	}
 	return ticket;
 };
