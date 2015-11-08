@@ -70,7 +70,7 @@ utils.parser.findTicket = function(url) {
 
 /**
  * @deprecated
- * @see utils.parser.redmine.getRedmineProjectId
+ * @see utils.parser.getRedmineProjectId
  * @return {Promise.<string>}
  */
 utils.parser.redmine.getProjectId = function() {
@@ -95,13 +95,18 @@ utils.parser.redmine.getProjectId = function() {
 
 
 /**
+ * @param {string} redmineUrl
  * @return {IThenable.<string>}
  */
-utils.parser.redmine.getRedmineProjectId = function(redmineUrl) {
-	var tab = utils.tab.getChromeTabByUrl(redmineUrl);
-	if (tab) {
-		return Promise.reject('tab not find');
-	}
+utils.parser.getRedmineProjectId = function(redmineUrl) {
+	return utils.tab
+		.getChromeTabByUrl(redmineUrl)
+		.then(function(tab) {
+			if (!tab) {
+				return Promise.reject('tab not find');
+			}
 
-	return utils.tab.inject(utils.tab.Injections.GET_REDMINE_PROJECT_ID);
+			return utils.tab.inject(utils.tab.Injections.GET_REDMINE_PROJECT_ID, tab);
+		});
+
 };
