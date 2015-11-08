@@ -1,5 +1,6 @@
 goog.provide('utils.parser');
 goog.require('config');
+goog.require('utils.tab');
 
 
 utils.parser = {};
@@ -68,6 +69,8 @@ utils.parser.findTicket = function(url) {
 
 
 /**
+ * @deprecated
+ * @see utils.parser.redmine.getRedmineProjectId
  * @return {Promise.<string>}
  */
 utils.parser.redmine.getProjectId = function() {
@@ -88,4 +91,17 @@ utils.parser.redmine.getProjectId = function() {
 			}
 		});
 	});
+};
+
+
+/**
+ * @return {IThenable.<string>}
+ */
+utils.parser.redmine.getRedmineProjectId = function(redmineUrl) {
+	var tab = utils.tab.getChromeTabByUrl(redmineUrl);
+	if (tab) {
+		return Promise.reject('tab not find');
+	}
+
+	return utils.tab.inject(utils.tab.Injections.GET_REDMINE_PROJECT_ID);
 };
