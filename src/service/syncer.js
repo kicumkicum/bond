@@ -35,15 +35,12 @@ service.Syncer.prototype.goToRedmineTicket = function() {
 /**
  * @return {IThenable.<string>}
  */
-service.Syncer.prototype.getRedMineTicketUrl = function() {
+service.Syncer.prototype.getRedMineTicketUrl = function(bitbucketUrl) {
 	return new Promise(function(resolve, reject) {
-		chrome.tabs.getSelected(function(tab) {
-			var tabUrl = tab.url;
-			var ticket = utils.parser.findTicket(tabUrl);
-			var ticketUrl = utils.parser.joinUrl('https://' + config.redmine.host, 'issues', ticket);
-			resolve(ticketUrl);
-		});
-	});
+		var ticket = utils.parser.findTicket(bitbucketUrl);
+		var ticketUrl = utils.parser.joinUrl('https://', this._settings.getRedmineHost(), 'issues', ticket);
+		resolve(ticketUrl);
+	}.bind(this));
 };
 
 
