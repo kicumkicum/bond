@@ -5,10 +5,15 @@ var IThenable = function() {};
 
 
 /**
- * @param {*} args
+ * @param {function} resolve
+ * @param {function=} reject
  * @return {IThenable}
  */
-IThenable.prototype.then = function(args) {};
+IThenable.prototype.then = function(resolve, opt_reject) {};
+
+IThenable.resolve = function() {};
+IThenable.reject = function() {};
+
 
 /**
  * @constructor
