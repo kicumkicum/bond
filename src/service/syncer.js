@@ -6,9 +6,12 @@ goog.require('utils.parser');
 
 
 /**
+ * @param {provider.Settings} settings
  * @constructor
  */
-service.Syncer = function(url) {
+service.Syncer = function(settings) {
+	this._settings = settings;
+
 	this._url = url;
 	this._owner = null;
 	this._redmineId = null;
@@ -178,6 +181,12 @@ service.Syncer.prototype.isRedmine = function() {
 service.Syncer.prototype._goto = function(url) {
 	window.open(url);
 };
+
+
+/**
+ * @type {provider.Settings}
+ */
+service.Syncer.prototype._settings;
 
 
 /**
