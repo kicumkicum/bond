@@ -40,13 +40,12 @@ var init = function() {
 	syncer.on('load', function() {
 		document.getElementById('redmine').onclick = syncer.goToRedmineTicket.bind(syncer);
 		document.getElementById('bit-pull').onclick = function() {
-			syncer.getBitbucketPullRequests().then(function(pulls) {
-				if (pulls.length === 1) {
-					goto(pulls[0].links.html.href);
-				} else {
-					showList(pulls);
-				}
-			});
+			var pullrequests = syncer.getBitbucketPullRequestsSync();
+			if (pullrequests.length === 1) {
+				goto(pullrequests[0].links.html.href);
+			} else {
+				showList(pullrequests);
+			}
 		};
 		document.getElementById('bit-branch').onclick = function() {
 			syncer.getBitbucketBranches().then(showList);

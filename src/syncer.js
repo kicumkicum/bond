@@ -86,6 +86,14 @@ Syncer.prototype.getBitbucketPullRequests = function() {
 
 
 /**
+ * @return {Array.<models.bitbucket.PullRequest>}
+ */
+Syncer.prototype.getBitbucketPullRequestsSync = function() {
+	return this._pullrequests;
+};
+
+
+/**
  * @param {string} token
  */
 Syncer.prototype.setBitbucketToken = function(token) {
@@ -117,25 +125,17 @@ Syncer.prototype.load = function() {
 						this._redmineId = redmineId;
 					}.bind(this))
 					.then(function() {
-						chrome.storage.sync.get(null, function(items) {
-							var settings = JSON.parse(items.settings.sync);
-							for (var owner in settings) if (settings.hasOwnProperty(owner)) {
-								for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
-									if (redmineId === this._redmineId) {
-										this._bitbucketRepo = settings[owner][redmineId];
-										break;
-									}
-								}
-								if (this._bitbucketRepo) {
-									this._owner = owner;
-									break;
-								}
-							}
-						}.bind(this));
+						return this._loadBitbucketInfo();
 					}.bind(this));
 			} else {
 				return Promise.resolve();
 			}
+		}.bind(this))
+		.then(function() {
+			return this.getBitbucketPullRequests();
+		}.bind(this))
+		.then(function(pullrequests) {
+			this._pullrequests = pullrequests;
 		}.bind(this))
 		.then(function() {
 			this.emit('load');
@@ -181,6 +181,32 @@ Syncer.prototype._goto = function(url) {
 
 
 /**
+ * @return {Promise.<undefined>}
+ * @protected
+ */
+Syncer.prototype._loadBitbucketInfo = function() {
+	return new Promise(function(resolve, reject) {
+		chrome.storage.sync.get(null, function(items) {
+			var settings = JSON.parse(items.settings.sync);
+			for (var owner in settings) if (settings.hasOwnProperty(owner)) {
+				for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
+					if (redmineId === this._redmineId) {
+						this._bitbucketRepo = settings[owner][redmineId];
+						break;
+					}
+				}
+				if (this._bitbucketRepo) {
+					this._owner = owner;
+					break;
+				}
+			}
+			resolve();
+		}.bind(this));
+	}.bind(this));
+};
+
+
+/**
  * @type {string}
  */
 Syncer.prototype._url;
@@ -196,6 +222,12 @@ Syncer.prototype._redmineTicket;
  * @type {string}
  */
 Syncer.prototype._bitbucketRepo;
+
+
+/**
+ * @type {Array.<models.bitbucket.PullRequest>}
+ */
+Syncer.prototype._pullrequests;
 
 
 /**
