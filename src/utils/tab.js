@@ -19,7 +19,7 @@ utils.tab.getChromeTabByUrl = function(url) {
 
 				tab ? resolve(tab) : reject('not find tab by url: ' + url);
 			});
-		})
+		});
 	});
 };
 

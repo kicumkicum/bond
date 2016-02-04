@@ -12,7 +12,7 @@ goog.require('utils.parser');
 service.Syncer = function(settings) {
 	this._settings = settings;
 
-	this._url = url;
+	this._url = null;
 	this._owner = null;
 	this._redmineId = null;
 	this._redmineTicket = null;
@@ -47,8 +47,8 @@ service.Syncer.prototype.getRedMineTicketUrl = function(bitbucketUrl) {
 /**
  * @return {IThenable.<Array.<models.bitbucket.Branch>>}
  */
-service.Syncer.prototype.getBitbucketBranches = function() {
-	return this._api.bitbucket.getBranches(this._owner, this._bitbucketRepo);
+service.Syncer.prototype.getBitbucketBranches = function(owner, repo) {
+	return this._api.bitbucket.getBranches(owner, repo);
 };
 
 
@@ -70,15 +70,20 @@ service.Syncer.prototype.getBitbucketPullRequestUrl = function() {
 
 
 /**
+ * @param {{
+ *      ticket: string
+ * }} redmine
+ * @param {service.Syncer.BitbucketInfo} bitbucket
  * @return {IThenable.<Array.<models.bitbucket.PullRequest>>}
  */
-service.Syncer.prototype.getBitbucketPullRequests = function() {
+service.Syncer.prototype.getBitbucketPullRequests = function(redmine, bitbucket) {
 	return this._api.bitbucket
-		.getPullRequests(this._owner, this._bitbucketRepo)
+		.getPullRequests(bitbucket.owner, bitbucket.repo)
 		.then(function(pulls) {
 			return pulls.filter(function(pull) {
-				var isTargetPullRequest = pull.title.indexOf(this._redmineTicket) !== -1;
-				var isTargetBranch = pull.source.branch.name.indexOf(this._redmineTicket) !== -1;
+				var isTargetPullRequest = pull.title.indexOf(redmine.ticket) !== -1;
+				var isTargetBranch = pull.source.branch.name.indexOf(redmine.ticket) !== -1;
+
 				return isTargetPullRequest || isTargetBranch;
 			}, this);
 		}.bind(this));
@@ -172,6 +177,35 @@ service.Syncer.prototype.isRedmine = function() {
 
 
 /**
+ * @param currentRedmineProjectId
+ * @return {Promise.<service.Syncer.BitbucketInfo>}
+ */
+service.Syncer.prototype.getBitbucketInfo = function(currentRedmineProjectId) {
+	return new Promise(function(resolve, reject) {
+		chrome.storage.sync.get(null, function(items) {
+			var bitbucketInfo = {};
+			var settings = JSON.parse(items.settings.sync);
+
+			for (var owner in settings) if (settings.hasOwnProperty(owner)) {
+				for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
+
+					if (redmineId === currentRedmineProjectId) {
+						bitbucketInfo.repo = settings[owner][redmineId];
+						break;
+					}
+				}
+
+				if (bitbucketInfo.repo) {
+					bitbucketInfo.owner = owner;
+					return resolve(bitbucketInfo);
+				}
+			}
+		}.bind(this));
+	}.bind(this));
+};
+
+
+/**
  * @param {string} url
  * @protected
  */
@@ -225,3 +259,12 @@ service.Syncer.prototype._token;
  * }}
  */
 service.Syncer.prototype._api;
+
+
+/**
+ * @typedef {{
+ *      owner: string,
+ *      repo: string
+ * }}
+ */
+service.Syncer.BitbucketInfo;
