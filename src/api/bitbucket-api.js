@@ -26,7 +26,7 @@ goog.inherits(api.Bitbucket, api.AbstractApi);
  */
 api.Bitbucket.prototype.getBranches = function(owner, repo) {
 	var getBranches = function(tabId) {
-		chrome.tabs.executeScript(tabId, {file: "/src/utils/get-branches-from-page.js"}, function() {
+		chrome.tabs.executeScript(tabId, {file: "/src/injections/get-branches-from-page.js"}, function() {
 			if (chrome.extension.lastError) {
 				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
 				console.log('error', message);
