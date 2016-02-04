@@ -14,9 +14,11 @@ utils.parser.getTicket = function(redmineUrl) {
 	var mask = config.redmine.host + '/issues/';
 	var pos = redmineUrl.indexOf(mask) + mask.length;
 	var ticket = '';
+
 	if (redmineUrl.indexOf(mask) !== 0) {
 		ticket = redmineUrl.substr(pos);
 	}
+
 	return ticket;
 };
 
@@ -109,4 +111,22 @@ utils.parser.getRedmineProjectId = function(redmineUrl) {
 			return utils.tab.inject(utils.tab.Injections.GET_REDMINE_PROJECT_ID, tab);
 		});
 
+};
+
+
+/**
+ * @param {string} url
+ * @return {boolean}
+ */
+utils.parser.isRedmine = function(url) {
+	return url.indexOf('https://' + config.redmine.host) === 0 || url.indexOf('http://' + config.redmine.host) === 0;
+};
+
+
+/**
+ * @param {string} url
+ * @return {boolean}
+ */
+utils.parser.isBitbucket = function(url) {
+	return url.indexOf('https://bitbucket.org') === 0 || url.indexOf('http://bitbucket.org') === 0;
 };
