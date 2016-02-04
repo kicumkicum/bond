@@ -161,6 +161,8 @@ service.Syncer.prototype.getCurrentUrl = function() {
 
 
 /**
+ * @deprecated
+ * @use utils.parser.isBitbucket
  * @return {boolean}
  */
 service.Syncer.prototype.isBitbucket = function() {
@@ -169,6 +171,8 @@ service.Syncer.prototype.isBitbucket = function() {
 
 
 /**
+ * @deprecated
+ * @use utils.parser.isRedmine()
  * @return {boolean}
  */
 service.Syncer.prototype.isRedmine = function() {
