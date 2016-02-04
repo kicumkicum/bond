@@ -43,38 +43,6 @@ Application.prototype.addTab = function(ticket) {
 
 
 /**
- * @param {string} redmineUrl
- * @return {IThenable.<Array.<>>}
- */
-Application.prototype.getPullRequests = function(ticket, owner, repo) {
-	return this._services.syncer.getBitbucketPullRequests({
-		ticket: ticket
-	}, {
-		owner: owner,
-		repo: repo
-	});
-};
-
-
-/**
- * @param {string} redmineUrl
- * @return {IThenable.<Array.<>>}
- */
-Application.prototype.getBranches = function(redmineUrl) {
-	return this._services.syncer.getBitbucketBranches(redmineUrl);
-};
-
-
-/**
- * @param {string} bitbucketUrl
- * @return {IThenable.<string>}
- */
-Application.prototype.getRedmineTicket = function(bitbucketUrl) {
-	return this._services.syncer.getRedMineTicketUrl(bitbucketUrl);
-};
-
-
-/**
  * @param {string} redmineTicket
  * @param {service.Syncer.BitbucketInfo} bitbucketInfo
  */
