@@ -8,7 +8,9 @@ goog.require('provider.Settings');
  * @constructor
  */
 var Application = function() {
+	window.app = this;
 	this._data = {};
+	utils.parser._data = this._data;
 	this._providers = {
 		settings: new provider.Settings
 	};
@@ -18,6 +20,17 @@ var Application = function() {
 	};
 
 	this._init();
+
+	//var server = {
+	//	'get-pullrequests': function(source, sendResponse) {
+	//		var ticket = utils.parser.findTicket(source);
+	//		sendResponse({pr: this._data[ticket].pullrequests});
+	//	}.bind(this)
+	//};
+	//
+	//chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+	//	return server[request.action] && server[request.action].call(server, request.source, sendResponse);
+	//});
 };
 
 
@@ -55,16 +68,19 @@ Application.prototype.setData = function(redmineTicket, bitbucketInfo) {
  * @protected
  */
 Application.prototype._init = function() {
-	chrome.extension.onMessage.addListener(function() {
-		console.log(arguments);
-	});
-
 	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 		var url = tab.url;
 		var isRedmine = utils.parser.isRedmine(url);
 		var isBitbucket = utils.parser.isBitbucket(url);
 
 		if (isRedmine) {
+			chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
+				if (chrome.extension.lastError) {
+					var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+					console.log(message);
+				}
+			});
+
 			utils.parser
 				.getRedmineProjectId(url)
 				.then(function(redmineProjectId) {
@@ -73,12 +89,27 @@ Application.prototype._init = function() {
 				.then(function(bitbucketInfo) {
 					var ticket = utils.parser.getTicket(url);
 					this.setData(ticket, bitbucketInfo);
-					this.addTab(ticket);
-				}.bind(this));
+					return this.addTab(ticket);
+				}.bind(this))
+				.then(function(tabData) {
+					var pullrequests = tabData.pullrequests;
+					chrome.tabs.executeScript(tabId, {
+						code: 'var pullrequests=' + JSON.stringify(pullrequests)}, function() {
+						chrome.tabs.executeScript(tabId, {
+							file: '/src/injections/add-pull-requests.js'
+						}, function() {
+							if (chrome.extension.lastError) {
+								var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+								console.log(message);
+							}
+						});
+					});
+				});
 		} else if (isBitbucket) {
 			// TODO
 		}
 	}.bind(this));
+
 };
 
 
