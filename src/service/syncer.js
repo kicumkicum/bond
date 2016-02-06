@@ -137,12 +137,6 @@ service.Syncer.prototype.load = function() {
 			}
 		}.bind(this))
 		.then(function() {
-			return this.getBitbucketPullRequests();
-		}.bind(this))
-		.then(function(pullrequests) {
-			this._pullrequests = pullrequests;
-		}.bind(this))
-		.then(function() {
 			this.emit('load');
 		}.bind(this));
 };
