@@ -1,7 +1,7 @@
 goog.provide('Application');
 goog.require('service.Syncer');
 goog.require('provider.Settings');
-
+goog.require('config');
 
 
 /**
@@ -68,48 +68,74 @@ Application.prototype.setData = function(redmineTicket, bitbucketInfo) {
  * @protected
  */
 Application.prototype._init = function() {
-	chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-		var url = tab.url;
-		var isRedmine = utils.parser.isRedmine(url);
-		var isBitbucket = utils.parser.isBitbucket(url);
+	chrome.tabs.onUpdated.addListener(this._onTabUpdate.bind(this));
+};
 
-		if (isRedmine) {
-			chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
-				if (chrome.extension.lastError) {
-					var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-					console.log(message);
-				}
-			});
 
-			utils.parser
-				.getRedmineProjectId(url)
-				.then(function(redmineProjectId) {
-					return this._services.syncer.getBitbucketInfo(redmineProjectId);
-				}.bind(this))
-				.then(function(bitbucketInfo) {
-					var ticket = utils.parser.getTicket(url);
-					this.setData(ticket, bitbucketInfo);
-					return this.addTab(ticket);
-				}.bind(this))
-				.then(function(tabData) {
-					var pullrequests = tabData.pullrequests;
+/**
+ * @param {number} tabId
+ * @param {Object} changeInfo
+ * @param {Object} tab
+ * @private
+ */
+Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
+	if (changeInfo.status === chrome.tabs.TabStatus.COMPLETE) {
+		return;
+	}
+	var url = tab.url;
+	var isRedmine = utils.parser.isRedmine(url);
+	var isBitbucket = utils.parser.isBitbucket(url);
+
+	if (isRedmine) {
+		chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
+			if (chrome.extension.lastError) {
+				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+				console.log(message);
+			}
+		});
+
+		utils.parser
+			.getRedmineProjectId(url)
+			.then(function(redmineProjectId) {
+				return this._services.syncer.getBitbucketInfo(redmineProjectId);
+			}.bind(this))
+			.then(function(bitbucketInfo) {
+				var ticket = utils.parser.getTicket(url);
+				this.setData(ticket, bitbucketInfo);
+				return this.addTab(ticket);
+			}.bind(this))
+			.then(function(tabData) {
+				var pullrequests = tabData.pullrequests;
+				chrome.tabs.executeScript(tabId, {
+					code: 'var pullrequests=' + JSON.stringify(pullrequests)
+				}, function() {
 					chrome.tabs.executeScript(tabId, {
-						code: 'var pullrequests=' + JSON.stringify(pullrequests)}, function() {
-						chrome.tabs.executeScript(tabId, {
-							file: '/src/injections/add-pull-requests.js'
-						}, function() {
-							if (chrome.extension.lastError) {
-								var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-								console.log(message);
-							}
-						});
+						file: '/src/injections/add-pull-requests.js'
+					}, function() {
+						if (chrome.extension.lastError) {
+							var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+							console.log(message);
+						}
 					});
 				});
-		} else if (isBitbucket) {
-			// TODO
-		}
-	}.bind(this));
+			});
 
+	} else if (isBitbucket) {
+		var isPullrequests = url.indexOf('pull-requests') !== -1;
+
+		if (isPullrequests) {
+			chrome.tabs.executeScript(tabId, {
+				code: 'var redmineUrl = "http://' + config.redmine.host + '/issues/";'
+			}, function() {
+				chrome.tabs.executeScript(tabId, {file: '/src/injections/parse-pull-request-title.js'}, function() {
+					if (chrome.extension.lastError) {
+						var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+						console.log(message);
+					}
+				});
+			});
+		}
+	}
 };
 
 
