@@ -6,7 +6,7 @@ var parse = function(redmineUrl) {
 	str[0] = ['<a href="', redmineUrl, ticket.replace('#', ''), '">', str[0], '</a>'].join('');
 	str = str.join(' ');
 
-	if (pullrequestTitle.innerHTML.indexOf(redmineUrl) === -1) {
+	if (pullrequestTitle.innerHTML.indexOf('<a') === -1) {
 		pullrequestTitle.innerHTML = str;
 	}
 };
