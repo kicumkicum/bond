@@ -1,6 +1,3 @@
-/**
- * Created by oleg on 08.07.15.
- */
 goog.require('goog.base');
 goog.require('service.Syncer');
 
@@ -40,7 +37,24 @@ var init = function() {
 	syncer.on('load', function() {
 		document.getElementById('redmine').onclick = syncer.goToRedmineTicket.bind(syncer);
 		document.getElementById('bit-pull').onclick = function() {
-			var pullrequests = syncer.getBitbucketPullRequestsSync();
+			utils.tab
+				.getCurrentUrl()
+				.then(function(url) {
+					chrome.extension.sendMessage({
+						'action': 'get-pullrequests',
+						'source': url
+					}, function(pr) {
+						var pullrequests = pr.pr;
+						if (pullrequests.length === 1) {
+							goto(pullrequests[0].links.html.href);
+						} else {
+							showList(pullrequests);
+						}
+					});
+				});
+
+
+			var pullrequests = [];//syncer.getBitbucketPullRequestsSync();
 			if (pullrequests.length === 1) {
 				goto(pullrequests[0].links.html.href);
 			} else {
@@ -59,4 +73,4 @@ var init = function() {
 	});
 };
 
-window.addEventListener('load', init);
+//window.addEventListener('load', init);

@@ -2,7 +2,9 @@
  * @param {Array.<models.bitbucket.PullRequest>} pullrequests
  */
 var addPullrequests = function(pullrequests) {
-	pullrequests.forEach(addPullrequest);
+	if (!document.getElementById('sidebar').lastChild.innerText) {
+		pullrequests.forEach(addPullrequest);
+	}
 };
 
 
