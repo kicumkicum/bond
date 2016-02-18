@@ -20,17 +20,6 @@ var Application = function() {
 	};
 
 	this._init();
-
-	//var server = {
-	//	'get-pullrequests': function(source, sendResponse) {
-	//		var ticket = utils.parser.findTicket(source);
-	//		sendResponse({pr: this._data[ticket].pullrequests});
-	//	}.bind(this)
-	//};
-	//
-	//chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
-	//	return server[request.action] && server[request.action].call(server, request.source, sendResponse);
-	//});
 };
 
 
@@ -82,62 +71,87 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
 	if (changeInfo.status === chrome.tabs.TabStatus.COMPLETE) {
 		return;
 	}
+
 	var url = tab.url;
 	var isRedmine = utils.parser.isRedmine(url);
 	var isBitbucket = utils.parser.isBitbucket(url);
 
 	if (isRedmine) {
-		chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
+		this._addPullRequestsList(tabId, url);
+	} else if (isBitbucket) {
+		var isPullrequestsPage = url.indexOf('pull-requests') !== -1;
+		if (isPullrequestsPage) {
+			this._highlightTicketNumber(tabId);
+		}
+	}
+};
+
+
+/**
+ * @param {number} tabId
+ * @param {string} url
+ * @protected
+ */
+Application.prototype._addPullRequestsList = function(tabId, url) {
+	chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
+		if (chrome.extension.lastError) {
+			var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+			console.log(message);
+		}
+	});
+
+	utils.parser
+		.getRedmineProjectId(url)
+		.then(this._services.syncer.getBitbucketInfo.bind(this._services.syncer))
+		.then(function(bitbucketInfo) {
+			var ticket = utils.parser.getTicket(url);
+			this.setData(ticket, bitbucketInfo);
+			return this.addTab(ticket);
+		}.bind(this))
+		.then(this._injectPullRequestsToList.bind(this, tabId));
+};
+
+
+/**
+ * @param {number} tabId
+ * @param {Application.TabData} tabData
+ * @private
+ */
+Application.prototype._injectPullRequestsToList = function(tabId, tabData) {
+	var pullrequests = tabData.pullrequests;
+	chrome.tabs.executeScript(tabId, {
+		code: 'var pullrequests=' + JSON.stringify(pullrequests)
+
+	}, function() {
+		chrome.tabs.executeScript(tabId, {
+			file: '/src/injections/add-pull-requests.js'
+
+		}, function() {
 			if (chrome.extension.lastError) {
 				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
 				console.log(message);
 			}
 		});
-
-		utils.parser
-			.getRedmineProjectId(url)
-			.then(function(redmineProjectId) {
-				return this._services.syncer.getBitbucketInfo(redmineProjectId);
-			}.bind(this))
-			.then(function(bitbucketInfo) {
-				var ticket = utils.parser.getTicket(url);
-				this.setData(ticket, bitbucketInfo);
-				return this.addTab(ticket);
-			}.bind(this))
-			.then(function(tabData) {
-				var pullrequests = tabData.pullrequests;
-				chrome.tabs.executeScript(tabId, {
-					code: 'var pullrequests=' + JSON.stringify(pullrequests)
-				}, function() {
-					chrome.tabs.executeScript(tabId, {
-						file: '/src/injections/add-pull-requests.js'
-					}, function() {
-						if (chrome.extension.lastError) {
-							var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-							console.log(message);
-						}
-					});
-				});
-			});
-
-	} else if (isBitbucket) {
-		var isPullrequests = url.indexOf('pull-requests') !== -1;
-
-		if (isPullrequests) {
-			chrome.tabs.executeScript(tabId, {
-				code: 'var redmineUrl = "http://' + config.redmine.host + '/issues/";'
-			}, function() {
-				chrome.tabs.executeScript(tabId, {file: '/src/injections/parse-pull-request-title.js'}, function() {
-					if (chrome.extension.lastError) {
-						var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-						console.log(message);
-					}
-				});
-			});
-		}
-	}
+	});
 };
 
+
+/**
+ * @param {number} tabId
+ * @protected
+ */
+Application.prototype._highlightTicketNumber = function(tabId) {
+	chrome.tabs.executeScript(tabId, {
+		code: 'var redmineUrl = "http://' + config.redmine.host + '/issues/";'
+	}, function() {
+		chrome.tabs.executeScript(tabId, {file: '/src/injections/parse-pull-request-title.js'}, function() {
+			if (chrome.extension.lastError) {
+				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+				console.log(message);
+			}
+		});
+	});
+};
 
 /**
  * @type {Object.<string, ?Application.TabData>}
@@ -171,7 +185,7 @@ Application.prototype._data;
  * @typedef {{
  *      ticket: (string|undefined),
  *      branches: (Array.<string>|undefined),
- *      pullRequests: (Array.<string>|undefined)
+ *      pullrequests: (Array.<string>|undefined)
  * }}
  */
 Application.TabData;
