@@ -24,32 +24,27 @@ var Application = function() {
 
 
 /**
- * @param {string} ticket
- * @return {IThenable.<Application.TabData>}
+ * @param {number} ticket
+ * @param {string} redmineProjectId
+ * @protected
  */
-Application.prototype.addTab = function(ticket) {
-	// TODO Rename this method
-	return Promise.all([
-		this._services.syncer.getBitbucketPullRequests({ticket: ticket}, this._data[ticket]),
-		this._services.syncer.getBitbucketBranches(this._data[ticket].owner, this._data[ticket].repo)
-	])
-		.then(function(array) {
+Application.prototype._loadData = function(ticket, redmineProjectId) {
+	this._services.syncer
+		.getBitbucketInfo(redmineProjectId)
+		.then(function(bitbucketInfo) {
 			this._data[ticket] = {
-				pullrequests: array[0],
-				branches: array[1]
+				bitbucketInfo: bitbucketInfo
 			};
 
-			return this._data[ticket];
+			return Promise.all([
+				this._services.syncer.getBitbucketPullRequests({ticket: ticket}, bitbucketInfo),
+				this._services.syncer.getBitbucketBranches(bitbucketInfo.owner, bitbucketInfo.repo)
+			])
+		}.bind(this))
+		.then(function(result) {
+			this._data[ticket].pullrequests = result[0];
+			this._data[ticket].branches = result[1];
 		}.bind(this));
-};
-
-
-/**
- * @param {string} redmineTicket
- * @param {service.Syncer.BitbucketInfo} bitbucketInfo
- */
-Application.prototype.setData = function(redmineTicket, bitbucketInfo) {
-	this._data[redmineTicket] = bitbucketInfo;
 };
 
 
@@ -100,14 +95,10 @@ Application.prototype._addPullRequestsList = function(tabId, url) {
 		}
 	});
 
+	var ticket = utils.parser.getTicket(url);
 	utils.parser
 		.getRedmineProjectId(url)
-		.then(this._services.syncer.getBitbucketInfo.bind(this._services.syncer))
-		.then(function(bitbucketInfo) {
-			var ticket = utils.parser.getTicket(url);
-			this.setData(ticket, bitbucketInfo);
-			return this.addTab(ticket);
-		}.bind(this))
+		.then(this._loadData.bind(this, ticket))
 		.then(this._injectPullRequestsToList.bind(this, tabId));
 };
 
