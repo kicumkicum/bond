@@ -29,7 +29,7 @@ var Application = function() {
  * @protected
  */
 Application.prototype._loadData = function(ticket, redmineProjectId) {
-	this._services.syncer
+	return this._services.syncer
 		.getBitbucketInfo(redmineProjectId)
 		.then(function(bitbucketInfo) {
 			this._data[ticket] = {
@@ -44,6 +44,8 @@ Application.prototype._loadData = function(ticket, redmineProjectId) {
 		.then(function(result) {
 			this._data[ticket].pullrequests = result[0];
 			this._data[ticket].branches = result[1];
+
+			return this._data[ticket];
 		}.bind(this));
 };
 
