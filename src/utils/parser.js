@@ -1,9 +1,6 @@
 goog.provide('utils.parser');
 goog.require('config');
 goog.require('utils.tab');
-
-
-utils.parser = {};
 utils.parser.redmine = {};
 
 /**
@@ -63,10 +60,14 @@ utils.parser.joinUrl = function() {
  * @return {string}
  */
 utils.parser.findTicket = function(url) {
-	var exp = /(((pull-request|branch).*(hotfix|feature|release)\D*)([0-9]*))/;
-
-	var ticketExp = exp.exec(url);
-	return ticketExp && ticketExp[5];
+	if (utils.parser.isBitbucket(url)) {
+		var exp = /(((pull-request|branch).*(hotfix|feature|release)\D*)([0-9]*))/;
+		var ticketExp = exp.exec(url);
+		return ticketExp && ticketExp[5];
+	} else if (utils.parser.isRedmine(url)) {
+		var array = url.split('/');
+		return array[array.length - 1];
+	}
 };
 
 

@@ -1,8 +1,13 @@
 goog.provide('utils.tab');
 
 
-
-utils.tab = {};
+utils.tab.getCurrentUrl = function() {
+	return new Promise(function(resolve, reject) {
+		chrome.tabs.getSelected(function(tab) {
+			tab.url ? resolve(tab.url) : reject('no-url');
+		});
+	});
+};
 
 
 /**

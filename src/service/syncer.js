@@ -91,6 +91,14 @@ service.Syncer.prototype.getBitbucketPullRequests = function(redmine, bitbucket)
 
 
 /**
+ * @return {Array.<models.bitbucket.PullRequest>}
+ */
+service.Syncer.prototype.getBitbucketPullRequestsSync = function() {
+	return this._pullrequests;
+};
+
+
+/**
  * @param {string} token
  */
 service.Syncer.prototype.setBitbucketToken = function(token) {
@@ -122,21 +130,7 @@ service.Syncer.prototype.load = function() {
 						this._redmineId = redmineId;
 					}.bind(this))
 					.then(function() {
-						chrome.storage.sync.get(null, function(items) {
-							var settings = JSON.parse(items.settings.sync);
-							for (var owner in settings) if (settings.hasOwnProperty(owner)) {
-								for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
-									if (redmineId === this._redmineId) {
-										this._bitbucketRepo = settings[owner][redmineId];
-										break;
-									}
-								}
-								if (this._bitbucketRepo) {
-									this._owner = owner;
-									break;
-								}
-							}
-						}.bind(this));
+						return this._loadBitbucketInfo();
 					}.bind(this));
 			} else {
 				return Promise.resolve();
@@ -161,6 +155,8 @@ service.Syncer.prototype.getCurrentUrl = function() {
 
 
 /**
+ * @deprecated
+ * @use utils.parser.isBitbucket
  * @return {boolean}
  */
 service.Syncer.prototype.isBitbucket = function() {
@@ -169,6 +165,8 @@ service.Syncer.prototype.isBitbucket = function() {
 
 
 /**
+ * @deprecated
+ * @use utils.parser.isRedmine()
  * @return {boolean}
  */
 service.Syncer.prototype.isRedmine = function() {
@@ -215,6 +213,32 @@ service.Syncer.prototype._goto = function(url) {
 
 
 /**
+ * @return {Promise.<undefined>}
+ * @protected
+ */
+service.Syncer.prototype._loadBitbucketInfo = function() {
+	return new Promise(function(resolve, reject) {
+		chrome.storage.sync.get(null, function(items) {
+			var settings = JSON.parse(items.settings.sync);
+			for (var owner in settings) if (settings.hasOwnProperty(owner)) {
+				for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
+					if (redmineId === this._redmineId) {
+						this._bitbucketRepo = settings[owner][redmineId];
+						break;
+					}
+				}
+				if (this._bitbucketRepo) {
+					this._owner = owner;
+					break;
+				}
+			}
+			resolve();
+		}.bind(this));
+	}.bind(this));
+};
+
+
+/**
  * @type {provider.Settings}
  */
 service.Syncer.prototype._settings;
@@ -236,6 +260,12 @@ service.Syncer.prototype._redmineTicket;
  * @type {string}
  */
 service.Syncer.prototype._bitbucketRepo;
+
+
+/**
+ * @type {Array.<models.bitbucket.PullRequest>}
+ */
+service.Syncer.prototype._pullrequests;
 
 
 /**
