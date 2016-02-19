@@ -146,6 +146,7 @@ Application.prototype._highlightTicketNumber = function(tabId) {
 	});
 };
 
+
 /**
  * @type {Object.<string, ?Application.TabData>}
  */
