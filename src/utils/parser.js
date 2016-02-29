@@ -1,16 +1,21 @@
 goog.provide('utils.parser');
-
-
-utils.parser = {};
+goog.require('config');
+goog.require('utils.tab');
 utils.parser.redmine = {};
 
-utils.parser.getTicket = function(url) {
-	var mask = 'dev.ifaced.ru/issues/';
-	var pos = url.indexOf(mask) + mask.length;
+/**
+ * @param {string} redmineUrl
+ * @return {string}
+ */
+utils.parser.getTicket = function(redmineUrl) {
+	var mask = config.redmine.host + '/issues/';
+	var pos = redmineUrl.indexOf(mask) + mask.length;
 	var ticket = '';
-	if (url.indexOf(mask) !== 0) {
-		ticket = url.substr(pos);
+
+	if (redmineUrl.indexOf(mask) !== 0) {
+		ticket = redmineUrl.substr(pos);
 	}
+
 	return ticket;
 };
 
@@ -55,14 +60,20 @@ utils.parser.joinUrl = function() {
  * @return {string}
  */
 utils.parser.findTicket = function(url) {
-	var exp = /(((pull-request|branch).*(hotfix|feature|release)\D*)([0-9]*))/;
-
-	var ticketExp = exp.exec(url);
-	return ticketExp && ticketExp[5];
+	if (utils.parser.isBitbucket(url)) {
+		var exp = /(((pull-request|branch).*(hotfix|feature|release)\D*)([0-9]*))/;
+		var ticketExp = exp.exec(url);
+		return ticketExp && ticketExp[5];
+	} else if (utils.parser.isRedmine(url)) {
+		var array = url.split('/');
+		return array[array.length - 1];
+	}
 };
 
 
 /**
+ * @deprecated
+ * @see utils.parser.getRedmineProjectId
  * @return {Promise.<string>}
  */
 utils.parser.redmine.getProjectId = function() {
@@ -75,7 +86,7 @@ utils.parser.redmine.getProjectId = function() {
 		};
 
 		chrome.extension.onMessage.addListener(listener);
-		chrome.tabs.executeScript(null, {file: "/src/utils/get-redmine-project-id.js"}, function() {
+		chrome.tabs.executeScript(null, {file: "/src/injections/get-redmine-project-id.js"}, function() {
 			if (chrome.extension.lastError) {
 				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
 				chrome.extension.onMessage.removeListener(listener);
@@ -83,4 +94,40 @@ utils.parser.redmine.getProjectId = function() {
 			}
 		});
 	});
+};
+
+
+/**
+ * @param {string} redmineUrl
+ * @return {IThenable.<string>}
+ */
+utils.parser.getRedmineProjectId = function(redmineUrl) {
+	return utils.tab
+		.getChromeTabByUrl(redmineUrl)
+		.then(function(tab) {
+			if (!tab) {
+				return Promise.reject('tab not find');
+			}
+
+			return utils.tab.inject(utils.tab.Injections.GET_REDMINE_PROJECT_ID, tab);
+		});
+
+};
+
+
+/**
+ * @param {string} url
+ * @return {boolean}
+ */
+utils.parser.isRedmine = function(url) {
+	return url.indexOf('https://' + config.redmine.host) === 0 || url.indexOf('http://' + config.redmine.host) === 0;
+};
+
+
+/**
+ * @param {string} url
+ * @return {boolean}
+ */
+utils.parser.isBitbucket = function(url) {
+	return url.indexOf('https://bitbucket.org') === 0 || url.indexOf('http://bitbucket.org') === 0;
 };

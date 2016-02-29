@@ -18,6 +18,9 @@ models.bitbucket.PullRequest = function(data) {
 		}
 	};
 	this.state = data['state'];
+
+	var url = this.links.html.href.split('/');
+	this.id = url[url.length - 1];
 	/*this. = data[''];
 	this. = data[''];
 	this. = data[''];

@@ -1,6 +1,6 @@
 # bitbucket-redmine-sync
 
-# установка
+# Установка
 
 * склонируйте репозиторий
 * выполните
@@ -12,6 +12,9 @@ $ git submodule update
 
 * в хроме выберете установку распакованного расширения, указав путь до репозиторя
 ![image](http://xtendedview.com/wp-content/uploads/Install-chrome-extensions-offline_640x334.jpg)
+
+# Настройка
+
 * перейдите в настройки, и задайте соответствие redmine-bitbucket в виде
 ```json
 {
@@ -25,3 +28,8 @@ $ git submodule update
   }
 }
 ```
+* получение bitbucket-токена
+* ![image](docs/img/bitbucket-token-0.png)
+* ![image](docs/img/bitbucket-token-1.png)
+* ![image](docs/img/bitbucket-token-2.png)
+* ![image](docs/img/bitbucket-token-3.png)

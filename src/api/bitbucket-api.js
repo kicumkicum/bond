@@ -1,5 +1,6 @@
 goog.provide('api.Bitbucket');
 goog.require('api.AbstractApi');
+goog.require('config');
 goog.require('models.bitbucket.Branch');
 goog.require('models.bitbucket.PullRequest');
 goog.require('utils.parser');
@@ -13,7 +14,6 @@ api.Bitbucket = function() {
 	this._url = 'https://bitbucket.org/api/2.0/';
 	this._realUrl = 'https://bitbucket.org';
 	this._maxPageLength = 50;
-
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
 
@@ -25,7 +25,7 @@ goog.inherits(api.Bitbucket, api.AbstractApi);
  */
 api.Bitbucket.prototype.getBranches = function(owner, repo) {
 	var getBranches = function(tabId) {
-		chrome.tabs.executeScript(tabId, {file: "/src/utils/get-branches-from-page.js"}, function() {
+		chrome.tabs.executeScript(tabId, {file: "/src/injections/get-branches-from-page.js"}, function() {
 			if (chrome.extension.lastError) {
 				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
 				console.log('error', message);
@@ -90,8 +90,7 @@ api.Bitbucket.prototype.getBranches = function(owner, repo) {
 api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 	var url = this._url + 'repositories/' + owner + '/' + repo + '/pullrequests/?state=merged,open' +
 		'&pagelen=' + this._maxPageLength;
-	var pulls = [];
-	var httpHeader = {'Authorization': 'Basic a2ljdW1raWN1bToxMXpobG01'};
+	var httpHeader = {'Authorization': 'Basic ' + config.token};
 
 	var request = function(url) {
 		return this
@@ -100,18 +99,34 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 				var responsePulls = response['values'].map(function(pull) {
 					return new models.bitbucket.PullRequest(pull);
 				});
+				var responsePullLength = responsePulls.length;
 
-				pulls = pulls.concat(responsePulls);
-				return response['next'];
-			})
+				responsePulls = responsePulls.filter(function(responsePull) {
+					return this._cachedPulls.every(function(pull) {
+						return pull.id !== responsePull.id;
+					})
+				}, this);
+
+				this._cachedPulls = this._cachedPulls.concat(responsePulls);
+
+				if (responsePullLength === responsePulls.length) {
+					return response['next'];
+				}
+			}.bind(this))
 			.then(function(url) {
 				if (url) {
 					return request(url, httpHeader);
 				} else {
-					return pulls;
+					return this._cachedPulls;
 				}
-			});
+			}.bind(this));
 	}.bind(this);
 
 	return request(url);
 };
+
+
+/**
+ * @type {Array<models.bitbucket.PullRequest>}
+ */
+api.Bitbucket.prototype._cachedPulls = [];
