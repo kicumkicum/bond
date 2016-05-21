@@ -3,6 +3,7 @@ goog.require('api.AbstractApi');
 goog.require('config');
 goog.require('models.bitbucket.Branch');
 goog.require('models.bitbucket.PullRequest');
+goog.require('models.bitbucket.Repository');
 goog.require('utils.parser');
 
 
@@ -16,6 +17,30 @@ api.Bitbucket = function() {
 	this._maxPageLength = 50;
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
+
+
+/**
+ * @param {string} url
+ * @param {Object} headers
+ * @return {IThenable<Array<*>>}
+ */
+api.Bitbucket.prototype.cyclicalRequest = function(url, headers) {
+	var result = [];
+	var request = function(url) {
+		return this.request(url, headers)
+			.then(function(response) {
+				result = result.concat(response['values']);
+
+				if (response['next']) {
+					return request(response['next']);
+				} else {
+					return result;
+				}
+			}.bind(this));
+	}.bind(this);
+
+	return request(url);
+};
 
 
 /**
