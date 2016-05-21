@@ -152,6 +152,23 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 
 
 /**
+ * @param {string} owner
+ * @return {IThenable<Array>}
+ */
+api.Bitbucket.prototype.getRepositories = function(owner) {
+	var url = this._url + 'teams/' + owner + '/repositories';
+	var httpHeader = {'Authorization': 'Basic ' + config.token};
+
+	return this.cyclicalRequest(url, httpHeader)
+		.then(function(response) {
+			return (response['values'] || []).map(function(repo) {
+				return new models.bitbucket.Repository(repo);
+			});
+		});
+};
+
+
+/**
  * @type {Array<models.bitbucket.PullRequest>}
  */
 api.Bitbucket.prototype._cachedPulls = [];
