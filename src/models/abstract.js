@@ -14,6 +14,6 @@ models.Abstract = function(data) {
 
 
 /**
- * @type {*} data
+ * @param {*} data
  */
-models.Abstract.prototype.parse = function() {};
+models.Abstract.prototype.parse = goog.abstractMethod;
