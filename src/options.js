@@ -27,51 +27,54 @@ function saveOptions() {
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
 function restoreOptions() {
-	// Use default value color = 'red' and likesColor = true.
-	chrome.storage.sync.get(null, function(items) {
-		document.getElementById('settings').value = items.settings.sync || '';
-		document.getElementById('settings_token').value = items.settings.token || '';
-		document.getElementById('settings_redmine_host').value = items.settings.redmineHost || '';
-		document.getElementById('settings_redmine_host2').value = items.settings.redmineHost || '';
-		document.getElementById('settings_redmine_api_key').value = items.settings.redmineApiKey || '';
-		document.getElementById('settings_bitbucket_owner').value = 'interfaced';
+	return new Promise(function(resolve, reject) {
+		chrome.storage.sync.get(null, function(items) {
+			document.getElementById('settings').value = items.settings.sync || '';
+			document.getElementById('settings_token').value = items.settings.token || '';
+			document.getElementById('settings_redmine_host').value = items.settings.redmineHost || '';
+			document.getElementById('settings_redmine_host2').value = items.settings.redmineHost || '';
+			document.getElementById('settings_redmine_api_key').value = items.settings.redmineApiKey || '';
+			document.getElementById('settings_bitbucket_owner').value = 'interfaced';
+
+			resolve();
+		});
 	});
+	// Use default value color = 'red' and likesColor = true.
 }
 document.addEventListener('DOMContentLoaded', function() {
-	restoreOptions();
-	debugger
-	var _api = {
-		bitbucket: new api.Bitbucket,
-		redmine: new api.Redmine
-	};
+	restoreOptions().then(function() {
+		var _api = {
+			bitbucket: new api.Bitbucket,
+			redmine: new api.Redmine
+		};
 
-	Promise.all([
-		_api.redmine.getProjects(),
-		_api.bitbucket.getRepositories(document.getElementById('settings_bitbucket_owner').value)
-	])
-		.then(function(response) {
-			var redmineProjects = response[0].projects;
-			var bitbucketRepo = response[1];
+		Promise.all([
+				_api.redmine.getProjects(),
+				_api.bitbucket.getRepositories(document.getElementById('settings_bitbucket_owner').value)
+			])
+			.then(function(response) {
+				var redmineProjects = response[0].projects;
+				var bitbucketRepo = response[1];
 
-			var sort = function(a, b) {
-				return a.name - b.name;
-			};
-			redmineProjects.sort(sort).forEach(function(project) {
-				var option = document.createElement('option');
-				option.setAttribute('value', project.identifier);
-				option.innerText = project.identifier;
-				document.getElementById('redmine-projects').appendChild(option);
+				var sort = function(a, b) {
+					return a.name - b.name;
+				};
+				redmineProjects.sort(sort).forEach(function(project) {
+					var option = document.createElement('option');
+					option.setAttribute('value', project.identifier);
+					option.innerText = project.identifier;
+					document.getElementById('redmine-projects').appendChild(option);
+				});
+
+				bitbucketRepo.sort(sort).forEach(function(repo) {
+					var option = document.createElement('option');
+					option.setAttribute('value', repo.name);
+					option.innerText = repo.name;
+					document.getElementById('bitbucket-repo').appendChild(option);
+				});
+
 			});
-
-			bitbucketRepo.sort(sort).forEach(function(repo) {
-				var option = document.createElement('option');
-				option.setAttribute('value', repo.name);
-				option.innerText = repo.name;
-				document.getElementById('bitbucket-repo').appendChild(option);
-			});
-
-		});
-
+	});
 });
 document.getElementById('save').addEventListener('click', saveOptions);
 document.getElementById('link-button').addEventListener('click', function() {
