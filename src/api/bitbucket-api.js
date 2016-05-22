@@ -161,7 +161,7 @@ api.Bitbucket.prototype.getRepositories = function(owner) {
 
 	return this.cyclicalRequest(url, httpHeader)
 		.then(function(response) {
-			return (response['values'] || []).map(function(repo) {
+			return response.map(function(repo) {
 				return new models.bitbucket.Repository(repo);
 			});
 		});
