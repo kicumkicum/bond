@@ -3,6 +3,7 @@ function save_options() {
 	var settings = {
 		sync: document.getElementById('settings').value,
 		redmineHost: document.getElementById('settings_redmine_host').value,
+		redmineApiKey: document.getElementById('settings_redmine_api_key').value,
 		token: document.getElementById('settings_token').value
 	};
 	//settings = JSON.parse(settings);
@@ -27,6 +28,7 @@ function restore_options() {
 		document.getElementById('settings').value = items.settings.sync;
 		document.getElementById('settings_token').value = items.settings.token;
 		document.getElementById('settings_redmine_host').value = items.settings.redmineHost;
+		document.getElementById('settings_redmine_api_key').value = items.settings.redmineApiKey;
 	});
 }
 document.addEventListener('DOMContentLoaded', restore_options);
