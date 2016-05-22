@@ -29,6 +29,8 @@
       "/src/models/bitbucket/repository.js",
       "/src/models/bitbucket/pull-request.js",
       "/src/models/bitbucket/branch.js",
+      "/src/models/redmine/project.js",
+      "/src/models/redmine/projects.js",
       "/src/models/settings-sync-item.js",
       "/src/models/settings.js",
       "/src/utils/tab.js",
