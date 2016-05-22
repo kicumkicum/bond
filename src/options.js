@@ -57,12 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				var bitbucketRepo = response[1];
 
 				var sort = function(a, b) {
-					return a.name - b.name;
+					return a.name.localeCompare(b.name);
 				};
 				redmineProjects.sort(sort).forEach(function(project) {
 					var option = document.createElement('option');
 					option.setAttribute('value', project.identifier);
-					option.innerText = project.identifier;
+					option.innerText = project.name;
 					document.getElementById('redmine-projects').appendChild(option);
 				});
 
