@@ -1,5 +1,5 @@
 // Saves options to chrome.storage
-function save_options() {
+function saveOptions() {
 	var settings = {
 		sync: document.getElementById('settings').value,
 		redmineHost: document.getElementById('settings_redmine_host').value,
@@ -22,7 +22,7 @@ function save_options() {
 
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
-function restore_options() {
+function restoreOptions() {
 	// Use default value color = 'red' and likesColor = true.
 	chrome.storage.sync.get(null, function(items) {
 		document.getElementById('settings').value = items.settings.sync;
@@ -31,5 +31,5 @@ function restore_options() {
 		document.getElementById('settings_redmine_api_key').value = items.settings.redmineApiKey;
 	});
 }
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('save').addEventListener('click', save_options);
+document.addEventListener('DOMContentLoaded', restoreOptions);
+document.getElementById('save').addEventListener('click', saveOptions);
