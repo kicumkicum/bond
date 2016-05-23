@@ -2,30 +2,47 @@ goog.provide('options');
 goog.require('api.Bitbucket');
 goog.require('api.Redmine');
 
-// Saves options to chrome.storage
-function saveOptions() {
-	var settings = {
+
+/**
+ * @return {{sync: string, redmineHost: string, redmineApiKey: string, token: string}}
+ */
+function readSettings() {
+	return {
 		sync: document.getElementById('settings').value,
 		redmineHost: document.getElementById('settings_redmine_host').value,
 		redmineApiKey: document.getElementById('settings_redmine_api_key').value,
 		token: document.getElementById('settings_token').value
 	};
-	//settings = JSON.parse(settings);
+}
 
-	chrome.storage.sync.set({
-		'settings': settings
-	}, function() {
-		// Update status to let user know options were saved.
-		var status = document.getElementById('status');
-		status.textContent = 'Options saved.';
-		setTimeout(function() {
-			status.textContent = '';
-		}, 750);
+
+/**
+ * @param {{
+ *      sync: string,
+ *      redmineHost: string,
+ *      redmineApiKey: string,
+ *      token: string
+ * }} settings
+ * @return {Promise}
+ */
+function saveOptions(settings) {
+	return new Promise(function(resolve, reject) {
+		chrome.storage.sync.set({
+			'settings': settings
+		}, function() {
+			// Update status to let user know options were saved.
+			var status = document.getElementById('status');
+			status.textContent = 'Options saved.';
+
+			resolve();
+		});
 	});
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
+
+/**
+ * @return {Promise}
+ */
 function restoreOptions() {
 	return new Promise(function(resolve, reject) {
 		chrome.storage.sync.get(null, function(items) {
@@ -76,18 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 	});
 });
-document.getElementById('save').addEventListener('click', saveOptions);
+document.getElementById('save').addEventListener('click', function() {
+	saveOptions(readSettings());
+});
 document.getElementById('link-button').addEventListener('click', function() {
 	var redmineProject = document.getElementById('redmine-projects').value;
 	var bitbucketRepo = document.getElementById('bitbucket-repo').value;
 
-	var settings = {
-		sync: document.getElementById('settings').value,
-		redmineHost: document.getElementById('settings_redmine_host').value,
-		redmineApiKey: document.getElementById('settings_redmine_api_key').value,
-		token: document.getElementById('settings_token').value
-	};
-
+	var settings = readSettings();
 	var sync = settings.sync;
 
 	try {
@@ -100,16 +113,5 @@ document.getElementById('link-button').addEventListener('click', function() {
 	sync['interfaced'][redmineProject] = bitbucketRepo;
 	settings.sync = JSON.stringify(sync);
 
-	chrome.storage.sync.set({
-		'settings': settings
-	}, function() {
-		// Update status to let user know options were saved.
-		var status = document.getElementById('status');
-		status.textContent = 'Options saved.';
-		setTimeout(function() {
-			status.textContent = '';
-		}, 750);
-	});
-
-	restoreOptions();
+	saveOptions(settings).then(restoreOptions);
 });
