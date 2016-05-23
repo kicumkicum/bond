@@ -56,8 +56,8 @@ function restoreOptions() {
 			resolve();
 		});
 	});
-	// Use default value color = 'red' and likesColor = true.
 }
+
 document.addEventListener('DOMContentLoaded', function() {
 	restoreOptions().then(function() {
 		var _api = {
