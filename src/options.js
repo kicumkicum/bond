@@ -11,7 +11,8 @@ function readSettings() {
 		sync: document.getElementById('settings').value,
 		redmineHost: document.getElementById('settings_redmine_host').value,
 		redmineApiKey: document.getElementById('settings_redmine_api_key').value,
-		token: document.getElementById('settings_token').value
+		token: document.getElementById('settings_token').value,
+		bitbucketOwner: document.getElementById('settings_bitbucket_owner').value
 	};
 }
 
@@ -108,8 +109,9 @@ document.getElementById('link-button').addEventListener('click', function() {
 		sync = {};
 	}
 
-	sync['interfaced'] = sync['interfaced'] || {};
-	sync['interfaced'][redmineProject] = bitbucketRepo;
+	var bitbucketOwner = settings.bitbucketOwner;
+	sync[bitbucketOwner] = sync[bitbucketOwner] || {};
+	sync[bitbucketOwner][redmineProject] = bitbucketRepo;
 	settings.sync = JSON.stringify(sync);
 
 	saveOptions(settings).then(restoreOptions);
