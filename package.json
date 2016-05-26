@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kicumkicum/bitbucket-redmine-sync.git"
+    "url": "git+https://github.com/kicumkicum/bond.git"
   },
   "keywords": [
     "bitbucket",
@@ -21,7 +21,7 @@
   "author": "kicumkicum@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kicumkicum/bitbucket-redmine-sync/issues"
+    "url": "https://github.com/kicumkicum/bond/issues"
   },
-  "homepage": "https://github.com/kicumkicum/bitbucket-redmine-sync#readme"
+  "homepage": "https://github.com/kicumkicum/bond#readme"
 }
