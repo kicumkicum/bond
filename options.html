@@ -2,14 +2,13 @@
 <html>
 <head><title>My Test Extension Options</title></head>
 <body>
-	<p><textarea placeholder="bitbucket token" name="settings" id="settings_token" cols="40" rows="1"></textarea></p>
-	<p><textarea placeholder="redmine host" name="settings" id="settings_redmine_host" cols="40" rows="1"></textarea></p>
-	<p><textarea placeholder="redmine api key" name="settings" id="settings_redmine_api_key" cols="40" rows="1"></textarea></p>
-	<p><textarea placeholder="sync data" name="settings" id="settings" cols="40" rows="3"></textarea></p>
 
 	<form id="link-form">
-		<p><textarea placeholder="bitbucket owner" name="settings" id="settings_bitbucket_owner" cols="40" rows="1"></textarea></p>
-		<p><textarea placeholder="redmine host" name="settings" id="settings_redmine_host2" cols="40" rows="1"></textarea></p>
+		<p><textarea placeholder="redmine host" name="settings" id="settings_redmine_host" cols="40" rows="1" style="float: left; margin-right: 5px"></textarea></p>
+		<p><input placeholder="redmine api key" type="password"  name="settings" id="settings_redmine_api_key" /></p>
+		<p><textarea placeholder="bitbucket owner" name="settings" id="settings_bitbucket_owner" cols="40" rows="1" style="float: left; margin-right: 5px" ></textarea></p>
+		<p><input placeholder="bitbucket token" type="password"  name="settings" id="settings_token" /></p>
+		<p><textarea placeholder="sync data" name="settings" id="settings" cols="40" rows="3"></textarea></p>
 
 		<select title="redmine" id="redmine-projects"></select>
 		<select title="bitbucket" id="bitbucket-repo"></select>

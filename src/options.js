@@ -49,7 +49,6 @@ function restoreOptions() {
 			document.getElementById('settings').value = items.settings.sync || '';
 			document.getElementById('settings_token').value = items.settings.token || '';
 			document.getElementById('settings_redmine_host').value = items.settings.redmineHost || '';
-			document.getElementById('settings_redmine_host2').value = items.settings.redmineHost || '';
 			document.getElementById('settings_redmine_api_key').value = items.settings.redmineApiKey || '';
 			document.getElementById('settings_bitbucket_owner').value = 'interfaced';
 
