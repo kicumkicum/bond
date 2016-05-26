@@ -11,7 +11,7 @@ goog.require('utils.parser');
  * @extends {api.AbstractApi}
  */
 api.Redmine = function() {
-	this._url = 'http://' + config.redmine.host;
+	this._url = config.redmine.host.indexOf('http') === 0 ? config.redmine.host : 'http://' + config.redmine.host;
 	this._realUrl = 'https://bitbucket.org';
 	this._maxPageLength = 50;
 };
