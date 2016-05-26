@@ -22,6 +22,10 @@ goog.inherits(api.Redmine, api.AbstractApi);
  * @return {IThenable<models.redmine.Projects>}
  */
 api.Redmine.prototype.getProjects = function() {
+	if (!config.redmine.apiKey) {
+		return Promise.reject();
+	}
+
 	return this.request('http://' + config.redmine.host + '/projects.json?limit=100', {
 		'X-Redmine-API-Key': config.redmine.apiKey
 	})
