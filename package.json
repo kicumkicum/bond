@@ -1,6 +1,6 @@
 {
   "name": "bond",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Bond you redmine projects and bitbucket repo.",
   "main": "config.js",
   "directories": {
