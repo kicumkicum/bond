@@ -6,4 +6,5 @@
 options page, and setting bond with mouse!
 
 ##Fix
+* [#23](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/23) Double protocol in redmine url
 * [#28](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/28) Undefined in inputs on options page
