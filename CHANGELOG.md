@@ -1,4 +1,4 @@
-#0.1.0 ()
+#0.1.0 (05.27.2016)
 
 ##Feature
 * [#27](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/27) I chose the name for this project :smile:
