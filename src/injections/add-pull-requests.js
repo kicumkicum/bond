@@ -31,15 +31,16 @@ var addPullrequest = function(pullrequest) {
 
 	}
 
-	image.setAttribute('src', '../images/' + imageName + '.png');
-	image.setAttribute('height', '10px');
-	image.style.marginRight = '5px';
+	if (imageName) {
+		image.setAttribute('src', '../images/' + imageName + '.png');
+		image.setAttribute('height', '10px');
+		image.style.marginRight = '5px';
+		div.appendChild(image);
+	}
 
 	a.setAttribute('class', 'query');
 	a.setAttribute('href', pullrequest.links.html.href);
 	a.innerText = pullrequest.title;
-
-	div.appendChild(image);
 	div.appendChild(a);
 
 	li.appendChild(div);
