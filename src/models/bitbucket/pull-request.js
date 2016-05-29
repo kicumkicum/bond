@@ -21,6 +21,8 @@ models.bitbucket.PullRequest = function(data) {
 
 	var url = this.links.html.href.split('/');
 	this.id = url[url.length - 1];
+
+	this.state = data['state'];
 	/*this. = data[''];
 	this. = data[''];
 	this. = data[''];
@@ -74,4 +76,14 @@ models.bitbucket.PullRequest = function(data) {
 		},
 		"state": "MERGED"
 	}*/
+};
+
+
+/**
+ * @enum {string}
+ */
+models.bitbucket.State = {
+	DECLINED: 'DECLINED',
+	MERGED: 'MERGED',
+	OPEN: 'OPEN'
 };
