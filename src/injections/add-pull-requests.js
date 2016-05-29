@@ -18,7 +18,7 @@ var addPullrequest = function(pullrequest) {
 	var image = document.createElement('img');
 
 	var imageName = '';
-	switch (pullrequest.state) {
+	switch (pullrequest['state']) {
 		case 'DECLINED':
 			imageName = 'false';
 			break;
