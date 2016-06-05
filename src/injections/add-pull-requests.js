@@ -15,34 +15,26 @@ var addPullrequest = function(pullrequest) {
 	var a = document.createElement('a');
 	var li = document.createElement('li');
 	var div = document.createElement('div');
-	var image = document.createElement('img');
 
 	var imageName = '';
 	switch (pullrequest['state']) {
 		case 'DECLINED':
-			imageName = 'false';
+			imageName = 'red';
 			break;
 		case 'MERGED':
-			imageName = 'true';
+			imageName = 'green';
 			break;
 		case 'OPEN':
-			imageName = 'ticket';
+			imageName = 'blue';
 			break;
 
 	}
 
-	if (imageName) {
-		image.setAttribute('src', '../images/' + imageName + '.png');
-		image.setAttribute('height', '10px');
-		image.style.marginRight = '5px';
-		div.appendChild(image);
-	}
-
-	a.setAttribute('class', 'query');
-	a.setAttribute('href', pullrequest.links.html.href);
-	a.innerText = pullrequest.title;
-	div.appendChild(a);
-
+	a.appendChild(div);
+	div.innerHTML = '<div>' +
+			'<div style="background-color:' + imageName +'; float:left; width:0.5em; height:0.5em; border-radius: 10em; margin-top:0.25em; margin-right: 0.5em"></div>' +
+			'<a class="query" href="'+ pullrequest.links.html.href + '">' + pullrequest.title +'</a>' +
+		'</div>';
 	li.appendChild(div);
 	document.getElementById('sidebar').lastChild.appendChild(li);
 };
