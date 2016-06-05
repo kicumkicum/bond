@@ -8,6 +8,8 @@ options page, and setting bond with mouse!
 ## Improvement
 * [#18](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/18)
 Remove unused files and resources
+* [#18](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/18)
+Remove icon from chrome panel
 
 ##Fix
 * [#23](https://github.com/kicumkicum/bitbucket-redmine-sync/issues/23) Double protocol in redmine url
