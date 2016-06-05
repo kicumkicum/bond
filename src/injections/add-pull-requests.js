@@ -16,25 +16,27 @@ var addPullrequest = function(pullrequest) {
 	var li = document.createElement('li');
 	var div = document.createElement('div');
 
-	var imageName = '';
+	var statusColor = '';
 	switch (pullrequest['state']) {
 		case 'DECLINED':
-			imageName = 'red';
+			statusColor = 'red';
 			break;
 		case 'MERGED':
-			imageName = 'green';
+			statusColor = 'green';
 			break;
 		case 'OPEN':
-			imageName = 'blue';
+			statusColor = 'blue';
 			break;
 
 	}
 
-	a.appendChild(div);
-	div.innerHTML = '<div>' +
-			'<div style="background-color:' + imageName +'; float:left; width:0.5em; height:0.5em; border-radius: 10em; margin-top:0.25em; margin-right: 0.5em"></div>' +
+	div.innerHTML =
+		'<div>' +
+			'<div style="background-color:' + statusColor +'; float:left; width:0.5em; height:0.5em; border-radius: 10em; margin-top:0.25em; margin-right: 0.5em"></div>' +
 			'<a class="query" href="'+ pullrequest.links.html.href + '">' + pullrequest.title +'</a>' +
 		'</div>';
+
+	a.appendChild(div);
 	li.appendChild(div);
 	document.getElementById('sidebar').lastChild.appendChild(li);
 };
