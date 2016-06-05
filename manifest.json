@@ -2,7 +2,7 @@
   "background": {
     "scripts": [
       "/ext-src/EventEmitter/EventEmitter.js",
-      "src/closure/goog/base.js",
+      "/lib/goog/base.js",
       "config.js",
       "/src/models/abstract.js",
       "/src/models/bitbucket/links.js",
