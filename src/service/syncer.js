@@ -24,7 +24,6 @@ service.Syncer = function(settings) {
 
 	this.load();
 };
-goog.inherits(service.Syncer, EventEmitter);
 
 
 /**
@@ -137,9 +136,6 @@ service.Syncer.prototype.load = function() {
 			} else {
 				return Promise.resolve();
 			}
-		}.bind(this))
-		.then(function() {
-			this.emit('load');
 		}.bind(this));
 };
 

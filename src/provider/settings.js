@@ -15,7 +15,6 @@ provider.Settings = function() {
 		}.bind(this));
 	}.bind(this));
 };
-goog.inherits(provider.Settings, EventEmitter);
 
 
 /**
