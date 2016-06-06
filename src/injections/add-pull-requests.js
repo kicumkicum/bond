@@ -30,14 +30,16 @@ var addPullrequest = function(pullrequest) {
 
 	}
 
-	div.innerHTML =
-		'<div>' +
-			'<div style="background-color:' + statusColor +'; float:left; width:0.5em; height:0.5em; border-radius: 10em; margin-top:0.25em; margin-right: 0.5em"></div>' +
-			'<a class="query" href="'+ pullrequest.links.html.href + '">' + pullrequest.title +'</a>' +
-		'</div>';
+	div.style.cssText = 'float: left; width: 0.5em; height: 0.5em; border-radius: 1em; margin-top: 0.25em; margin-right: 0.5em';
+	div.style.backgroundColor = statusColor;
 
-	a.appendChild(div);
+	var linkText = document.createTextNode(pullrequest.title);
+	a.appendChild(linkText);
+	a.setAttribute('class', 'query');
+	a.href = pullrequest.links.html.href;
+
 	li.appendChild(div);
+	li.appendChild(a);
 	document.getElementById('sidebar').lastChild.appendChild(li);
 };
 
