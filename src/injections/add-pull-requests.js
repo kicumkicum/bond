@@ -38,6 +38,7 @@ var addPullrequest = function(pullrequest) {
 	a.setAttribute('class', 'query');
 	a.href = pullrequest.links.html.href;
 
+	li.style.lineHeight = '1.0';
 	li.appendChild(div);
 	li.appendChild(a);
 	document.getElementById('sidebar').lastChild.appendChild(li);
