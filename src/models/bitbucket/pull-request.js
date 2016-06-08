@@ -3,7 +3,10 @@ goog.require('models.bitbucket.Links');
 goog.require('models.bitbucket.Repository');
 
 
-
+/**
+ * @param {Object} data
+ * @constructor
+ */
 models.bitbucket.PullRequest = function(data) {
 	this.description = data['description'];
 	this.links = new models.bitbucket.Links(data['links']);
@@ -21,6 +24,9 @@ models.bitbucket.PullRequest = function(data) {
 
 	var url = this.links.html.href.split('/');
 	this.id = url[url.length - 1];
+
+	/** @type {models.bitbucket.PullRequest.State} */
+	this.state = data['state'];
 	/*this. = data[''];
 	this. = data[''];
 	this. = data[''];
@@ -74,4 +80,14 @@ models.bitbucket.PullRequest = function(data) {
 		},
 		"state": "MERGED"
 	}*/
+};
+
+
+/**
+ * @enum {string}
+ */
+models.bitbucket.PullRequest.State = {
+	DECLINED: 'DECLINED',
+	MERGED: 'MERGED',
+	OPEN: 'OPEN'
 };
