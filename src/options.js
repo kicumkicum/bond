@@ -100,6 +100,10 @@ document.getElementById('link-button').addEventListener('click', function() {
 	var redmineProject = document.getElementById('redmine-projects').value;
 	var bitbucketRepo = document.getElementById('bitbucket-repo').value;
 
+	if (!redmineProject || !bitbucketRepo) {
+		return;
+	}
+
 	var settings = readSettings();
 	var sync = settings.sync;
 
