@@ -1,3 +1,13 @@
+# v0.2.0 ()
+
+## Improvement
+* [#19](https://github.com/kicumkicum/bond/issues/19)
+Remove unused module EventEmitter
+* [#18](https://github.com/kicumkicum/bond/issues/18)
+Remove unused files and resources
+* [#18](https://github.com/kicumkicum/bond/issues/18)
+Remove icon from chrome panel
+
 # v0.1.0 (27.05.2016)
 
 ## Feature
@@ -5,12 +15,6 @@
 I chose the name for this project :smile:
 * [#26](https://github.com/kicumkicum/bond/issues/26)
 Load redmine projects and bitbucket repo in options page, and setting bond with mouse!
-
-## Improvement
-* [#18](https://github.com/kicumkicum/bond/issues/18)
-Remove unused files and resources
-* [#18](https://github.com/kicumkicum/bond/issues/18)
-Remove icon from chrome panel
 
 ## Fix
 * [#23](https://github.com/kicumkicum/bond/issues/23)
