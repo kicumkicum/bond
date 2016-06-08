@@ -3,13 +3,6 @@
 # Установка
 
 * склонируйте репозиторий
-* выполните
-
-<pre><code>
-$ git submodule init
-$ git submodule update
-</code></pre>
-
 * в хроме выберете установку распакованного расширения, указав путь до репозиторя
 ![image](http://xtendedview.com/wp-content/uploads/Install-chrome-extensions-offline_640x334.jpg)
 
