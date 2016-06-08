@@ -1,5 +1,9 @@
 # v0.2.0 ()
 
+## Feature
+* [#15](https://github.com/kicumkicum/bond/issues/15)
+Add status for pull-requests on redmine page
+
 ## Improvement
 * [#19](https://github.com/kicumkicum/bond/issues/19)
 Remove unused module EventEmitter
