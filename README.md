@@ -8,19 +8,12 @@
 
 # Настройка
 
-* перейдите в настройки, и задайте соответствие redmine-bitbucket в виде
-```json
-{
-  "owner": {
-    "redmine-project-id":"bitbucket-repo",
-    "redmine-project-id-2":"bitbucket-repo-4"
-  },
-  "owner-2": {
-    "redmine-project-id-3":"bitbucket-repo-3",
-    "redmine-project-id-4":"bitbucket-repo-4"
-  }
-}
-```
+* перейдите в настройки, и задайте соответствие redmine-bitbucket с помощью выпадающих списков.  
+![image](docs/img/create-bind.png)
+
+* получение redmine-токена  
+![image](docs/img/redmine-key.png)
+
 * получение bitbucket-токена
 * ![image](docs/img/bitbucket-token-0.png)
 * ![image](docs/img/bitbucket-token-1.png)
