@@ -1,29 +1,27 @@
 {
-  "name": "bitbucket-redmine-sync",
-  "version": "0.0.5",
-  "description": "Chrome extension for sync bind redmine issues and bitbucket pull-requests",
-  "main": "src/background.js",
+  "name": "bond",
+  "version": "0.2.0",
+  "description": "Bond you redmine projects and bitbucket repo.",
+  "main": "config.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kicumkicum/bitbucket-redmine-sync.git"
+    "url": "git+https://github.com/kicumkicum/bond.git"
   },
   "keywords": [
-    "redmine",
     "bitbucket",
-    "extension",
-    "chrome",
-    "plugin"
+    "redmine",
+    "bond"
   ],
-  "author": "kicumkicum",
+  "author": "kicumkicum@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kicumkicum/bitbucket-redmine-sync/issues"
+    "url": "https://github.com/kicumkicum/bond/issues"
   },
-  "homepage": "https://github.com/kicumkicum/bitbucket-redmine-sync#readme"
+  "homepage": "https://github.com/kicumkicum/bond#readme"
 }

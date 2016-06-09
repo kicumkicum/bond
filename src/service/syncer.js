@@ -1,5 +1,6 @@
 goog.provide('service.Syncer');
 goog.require('api.Bitbucket');
+goog.require('api.Redmine');
 goog.require('config');
 goog.require('utils.parser');
 
@@ -17,12 +18,12 @@ service.Syncer = function(settings) {
 	this._redmineId = null;
 	this._redmineTicket = null;
 	this._api = {
-		bitbucket: new api.Bitbucket
+		bitbucket: new api.Bitbucket,
+		redmine: new api.Redmine
 	};
 
 	this.load();
 };
-goog.inherits(service.Syncer, EventEmitter);
 
 
 /**
@@ -135,9 +136,6 @@ service.Syncer.prototype.load = function() {
 			} else {
 				return Promise.resolve();
 			}
-		}.bind(this))
-		.then(function() {
-			this.emit('load');
 		}.bind(this));
 };
 
@@ -285,7 +283,8 @@ service.Syncer.prototype._token;
 
 /**
  * @type {{
- *      bitbucket: api.Bitbucket
+ *      bitbucket: api.Bitbucket,
+ *      redmine: api.Redmine
  * }}
  */
 service.Syncer.prototype._api;

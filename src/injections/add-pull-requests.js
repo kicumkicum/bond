@@ -12,14 +12,34 @@ var addPullrequests = function(pullrequests) {
  * @param {models.bitbucket.PullRequest} pullrequest
  */
 var addPullrequest = function(pullrequest) {
-	console.log('uo');
-	var li = document.createElement('li');
 	var a = document.createElement('a');
+	var li = document.createElement('li');
+	var div = document.createElement('div');
 
+	var statusColor = '';
+	switch (pullrequest['state']) {
+		case 'DECLINED':
+			statusColor = 'red';
+			break;
+		case 'MERGED':
+			statusColor = 'green';
+			break;
+		case 'OPEN':
+			statusColor = 'blue';
+			break;
+
+	}
+
+	div.style.cssText = 'float: left; width: 0.5em; height: 0.5em; border-radius: 1em; margin-top: 0.25em; margin-right: 0.5em';
+	div.style.backgroundColor = statusColor;
+
+	var linkText = document.createTextNode(pullrequest.title);
+	a.appendChild(linkText);
 	a.setAttribute('class', 'query');
-	a.setAttribute('href', pullrequest.links.html.href);
-	a.innerText = pullrequest.title;
+	a.href = pullrequest.links.html.href;
 
+	li.style.lineHeight = '1.0';
+	li.appendChild(div);
 	li.appendChild(a);
 	document.getElementById('sidebar').lastChild.appendChild(li);
 };

@@ -3,6 +3,7 @@ goog.require('api.AbstractApi');
 goog.require('config');
 goog.require('models.bitbucket.Branch');
 goog.require('models.bitbucket.PullRequest');
+goog.require('models.bitbucket.Repository');
 goog.require('utils.parser');
 
 
@@ -16,6 +17,30 @@ api.Bitbucket = function() {
 	this._maxPageLength = 50;
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
+
+
+/**
+ * @param {string} url
+ * @param {Object} headers
+ * @return {IThenable<Array<*>>}
+ */
+api.Bitbucket.prototype.cyclicalRequest = function(url, headers) {
+	var result = [];
+	var request = function(url) {
+		return this.request(url, headers)
+			.then(function(response) {
+				result = result.concat(response['values']);
+
+				if (response['next']) {
+					return request(response['next']);
+				} else {
+					return result;
+				}
+			}.bind(this));
+	}.bind(this);
+
+	return request(url);
+};
 
 
 /**
@@ -123,6 +148,23 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 	}.bind(this);
 
 	return request(url);
+};
+
+
+/**
+ * @param {string} owner
+ * @return {IThenable<Array>}
+ */
+api.Bitbucket.prototype.getRepositories = function(owner) {
+	var url = this._url + 'teams/' + owner + '/repositories';
+	var httpHeader = {'Authorization': 'Basic ' + config.token};
+
+	return this.cyclicalRequest(url, httpHeader)
+		.then(function(response) {
+			return response.map(function(repo) {
+				return new models.bitbucket.Repository(repo);
+			});
+		});
 };
 
 

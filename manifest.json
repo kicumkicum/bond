@@ -1,44 +1,41 @@
 {
-  "name": "Bitbucket-Redmine-Sync",
-  "description": "My first Chrome App.",
-  "version": "0.0.5",
-  "manifest_version": 2,
-  "icons": {
-    "16": "icons/calculator-16.png",
-    "128": "icons/calculator-128.png"
-  },
-  "permissions": [
-    "tabs",
-    "storage",
-    "http://*/",
-    "https://*/"
-  ],
-  "browser_action": {
-    "default_title": "go,go,go",
-    "default_icon": "icons/calculator-128.png",
-    "default_popup": "popup.html"
-  },
-  "options_page": "options.html",
   "background": {
     "scripts": [
-      "/ext-src/EventEmitter/EventEmitter.js",
-      "src/closure/goog/base.js",
+      "/lib/goog/base.js",
       "config.js",
       "/src/models/abstract.js",
       "/src/models/bitbucket/links.js",
       "/src/models/bitbucket/repository.js",
       "/src/models/bitbucket/pull-request.js",
       "/src/models/bitbucket/branch.js",
+      "/src/models/redmine/project.js",
+      "/src/models/redmine/projects.js",
       "/src/models/settings-sync-item.js",
       "/src/models/settings.js",
       "/src/utils/tab.js",
       "/src/utils/parser.js",
       "src/api/abstract-api.js",
       "src/api/bitbucket-api.js",
+      "src/api/redmine.js",
       "src/service/syncer.js",
       "src/provider/settings.js",
       "src/application.js",
       "src/background.js"
     ]
-  }
+  },
+  "description": "Bond allows you to bind redmine and bitbucket",
+  "icons": {
+    "16": "icons/calculator-16.png",
+    "128": "icons/calculator-128.png"
+  },
+  "manifest_version": 2,
+  "name": "Bond",
+  "options_page": "options.html",
+  "permissions": [
+    "http://*/",
+    "https://*/",
+    "storage",
+    "tabs"
+  ],
+  "version": "0.2.0"
 }
