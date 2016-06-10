@@ -186,7 +186,7 @@ service.Syncer.prototype.getBitbucketInfo = function(currentRedmineProjectId) {
 				for (var redmineId in settings[owner]) if (settings[owner].hasOwnProperty(redmineId)) {
 
 					if (redmineId === currentRedmineProjectId) {
-						bitbucketInfo.repo = settings[owner][redmineId];
+						bitbucketInfo.repo = settings[owner][redmineId].toLocaleLowerCase();
 						break;
 					}
 				}

@@ -5,6 +5,8 @@
 Add button for create branch by ticket on redmine page
 
 ## Fix
+* [#46](https://github.com/kicumkicum/bond/issues/46)
+Fix load pull-requests for project with capital letter in the name
 * [#29](https://github.com/kicumkicum/bond/issues/29)
 Fix triple loading data on redmine page
 
