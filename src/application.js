@@ -65,7 +65,7 @@ Application.prototype._init = function() {
  * @private
  */
 Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
-	if (changeInfo.status === chrome.tabs.TabStatus.COMPLETE) {
+	if (changeInfo.status !== chrome.tabs.TabStatus.LOADING) {
 		return;
 	}
 
@@ -74,7 +74,17 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
 	var isBitbucket = utils.parser.isBitbucket(url);
 
 	if (isRedmine) {
-		this._addPullRequestsList(tabId, url);
+		var issue = utils.parser.getTicket(url);
+		return utils.parser
+			.getRedmineProjectId(url)
+			.then(this._loadData.bind(this, issue))
+			.then(function() {
+				this._injectCreateBranchButton(tabId, issue, (this._data[issue] || {}).bitbucketInfo);
+				setTimeout(function() {
+					this._addPullRequestsList(tabId, url);
+				}.bind(this), 300);
+			}.bind(this));
+
 	} else if (isBitbucket) {
 		var isPullrequestsPage = url.indexOf('pull-requests') !== -1;
 		if (isPullrequestsPage) {
@@ -98,10 +108,7 @@ Application.prototype._addPullRequestsList = function(tabId, url) {
 	});
 
 	var ticket = utils.parser.getTicket(url);
-	utils.parser
-		.getRedmineProjectId(url)
-		.then(this._loadData.bind(this, ticket))
-		.then(this._injectPullRequestsToList.bind(this, tabId));
+	return this._injectPullRequestsToList(tabId, this._data[ticket] || {});
 };
 
 
@@ -118,6 +125,29 @@ Application.prototype._injectPullRequestsToList = function(tabId, tabData) {
 	}, function() {
 		chrome.tabs.executeScript(tabId, {
 			file: '/src/injections/add-pull-requests.js'
+
+		}, function() {
+			if (chrome.extension.lastError) {
+				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
+				console.log(message);
+			}
+		});
+	});
+};
+
+
+/**
+ * @param {number} tabId
+ * @param {number} issue
+ * @param {service.Syncer.BitbucketInfo} bitbucketInfo
+ * @private
+ */
+Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbucketInfo) {
+	chrome.tabs.executeScript(tabId, {
+		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo)
+	}, function() {
+		chrome.tabs.executeScript(tabId, {
+			file: '/src/injections/create-branch-button.js'
 
 		}, function() {
 			if (chrome.extension.lastError) {
