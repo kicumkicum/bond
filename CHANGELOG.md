@@ -14,6 +14,10 @@ Fix triple loading data on redmine page
 * [#15](https://github.com/kicumkicum/bond/issues/15)
 Add status for pull-requests on redmine page
 
+## Fix
+* [#42](https://github.com/kicumkicum/bond/issues/42)
+Fix saving bad data before load repo and projects
+
 ## Improvement
 * [#19](https://github.com/kicumkicum/bond/issues/19)
 Remove unused module EventEmitter
