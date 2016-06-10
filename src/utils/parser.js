@@ -8,15 +8,8 @@ utils.parser.redmine = {};
  * @return {string}
  */
 utils.parser.getTicket = function(redmineUrl) {
-	var mask = config.redmine.host + '/issues/';
-	var pos = redmineUrl.indexOf(mask) + mask.length;
-	var ticket = '';
-
-	if (redmineUrl.indexOf(mask) !== 0) {
-		ticket = redmineUrl.substr(pos);
-	}
-
-	return ticket;
+	var result = /.*issues\/(.*)/.exec(redmineUrl);
+	return result ? result[1] : '';
 };
 
 

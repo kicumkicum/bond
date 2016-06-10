@@ -1,3 +1,13 @@
+# v0.3.0 ()
+
+## Feature
+* [#29](https://github.com/kicumkicum/bond/issues/29)
+Add button for create branch by ticket on redmine page
+
+## Fix
+* [#29](https://github.com/kicumkicum/bond/issues/29)
+Fix triple loading data on redmine page
+
 # v0.2.0 (09.06.2016)
 
 ## Feature
