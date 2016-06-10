@@ -1,5 +1,7 @@
 # bitbucket-redmine-sync
 
+[![Join the chat at https://gitter.im/kicumkicum/bond](https://badges.gitter.im/kicumkicum/bond.svg)](https://gitter.im/kicumkicum/bond?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 # Установка
 
 * склонируйте репозиторий
