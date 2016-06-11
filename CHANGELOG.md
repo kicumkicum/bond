@@ -1,8 +1,24 @@
+# v0.3.0 (11.06.2016)
+
+## Feature
+* [#29](https://github.com/kicumkicum/bond/issues/29)
+Add button for create branch by ticket on redmine page
+
+## Fix
+* [#46](https://github.com/kicumkicum/bond/issues/46)
+Fix load pull-requests for project with capital letter in the name
+* [#29](https://github.com/kicumkicum/bond/issues/29)
+Fix triple loading data on redmine page
+
 # v0.2.0 (09.06.2016)
 
 ## Feature
 * [#15](https://github.com/kicumkicum/bond/issues/15)
 Add status for pull-requests on redmine page
+
+## Fix
+* [#42](https://github.com/kicumkicum/bond/issues/42)
+Fix saving bad data before load repo and projects
 
 ## Improvement
 * [#19](https://github.com/kicumkicum/bond/issues/19)
