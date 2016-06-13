@@ -87,7 +87,7 @@ api.AbstractApi.prototype.getAllElementsWithAttribute = function(attribute, opt_
 /**
  * @param {...string} var_args
  * @return {string}
- * @private
+ * @protected
  */
 api.AbstractApi.prototype._createUrl = function(var_args) {
 	var url = Array.prototype.join.call(arguments, '/');
