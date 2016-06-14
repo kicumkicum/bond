@@ -7,8 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "exit 0",
-    "precommit": "echo precommit"
+    "test": "exit 0"
   },
   "repository": {
     "type": "git",
