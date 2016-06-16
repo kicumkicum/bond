@@ -2,6 +2,7 @@ goog.provide('models.bitbucket.Branch');
 goog.require('models.bitbucket.Links');
 
 
+
 /**
  * @param {*} data
  * @constructor
