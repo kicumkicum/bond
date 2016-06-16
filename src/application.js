@@ -26,6 +26,7 @@ var Application = function() {
 /**
  * @param {number} ticket
  * @param {string} redmineProjectId
+ * @return {IThenable<Application.TabData>}
  * @protected
  */
 Application.prototype._loadData = function(ticket, redmineProjectId) {
@@ -38,8 +39,8 @@ Application.prototype._loadData = function(ticket, redmineProjectId) {
 
 			return Promise.all([
 				this._services.syncer.getBitbucketPullRequests({ticket: ticket}, bitbucketInfo),
-				this._services.syncer.getBitbucketBranches(bitbucketInfo.owner, bitbucketInfo.repo)
-			])
+				this._services.syncer.getBitbucketBranches(bitbucketInfo.owner, bitbucketInfo.repo, ticket.toString())
+			]);
 		}.bind(this))
 		.then(function(result) {
 			this._data[ticket].pullrequests = result[0];
@@ -79,7 +80,7 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
 			.getRedmineProjectId(url)
 			.then(this._loadData.bind(this, issue))
 			.then(function() {
-				this._injectCreateBranchButton(tabId, issue, (this._data[issue] || {}).bitbucketInfo);
+				this._injectCreateBranchButton(tabId, issue, (this._data[issue] || {}).bitbucketInfo, (this._data[issue] || {}).branches);
 				setTimeout(function() {
 					this._addPullRequestsList(tabId, url);
 				}.bind(this), 300);
@@ -100,13 +101,6 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
  * @protected
  */
 Application.prototype._addPullRequestsList = function(tabId, url) {
-	chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
-		if (chrome.extension.lastError) {
-			var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-			console.log(message);
-		}
-	});
-
 	var ticket = utils.parser.getTicket(url);
 	return this._injectPullRequestsToList(tabId, this._data[ticket] || {});
 };
@@ -142,12 +136,12 @@ Application.prototype._injectPullRequestsToList = function(tabId, tabData) {
  * @param {service.Syncer.BitbucketInfo} bitbucketInfo
  * @private
  */
-Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbucketInfo) {
+Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbucketInfo, branches) {
 	chrome.tabs.executeScript(tabId, {
-		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo)
+		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo) + ', branches = ' + JSON.stringify(branches)
 	}, function() {
 		chrome.tabs.executeScript(tabId, {
-			file: '/src/injections/create-branch-button.js'
+			file: '/src/injections/create-branch-list.js'
 
 		}, function() {
 			if (chrome.extension.lastError) {
@@ -178,12 +172,6 @@ Application.prototype._highlightTicketNumber = function(tabId) {
 
 
 /**
- * @type {Object.<string, ?Application.TabData>}
- */
-Application.prototype._tabs;
-
-
-/**
  * @type {{
  *      syncer: service.Syncer
  * }}
@@ -200,16 +188,16 @@ Application.prototype._providers;
 
 
 /**
- * @type {Object.<string, service.Syncer.BitbucketInfo>}
+ * @type {Application.TabData}
  */
 Application.prototype._data;
 
 
 /**
- * @typedef {{
+ * @typedef {Object.<string, {
  *      ticket: (string|undefined),
  *      branches: (Array.<string>|undefined),
  *      pullrequests: (Array.<string>|undefined)
- * }}
+ * }>}
  */
 Application.TabData;
