@@ -147,7 +147,7 @@ Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbuck
 		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo)
 	}, function() {
 		chrome.tabs.executeScript(tabId, {
-			file: '/src/injections/create-branch-button.js'
+			file: '/src/injections/create-branch-list.js'
 
 		}, function() {
 			if (chrome.extension.lastError) {
