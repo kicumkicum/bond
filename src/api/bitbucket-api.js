@@ -69,7 +69,7 @@ api.Bitbucket.prototype.getBranches = function(owner, repoName) {
  */
 api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 	var url = this._createUrl(
-		this._url, 'repositories', owner, repo, 'pullrequests/?state=merged,open&pagelen=', String(this._maxPageLength));
+		this._url, 'repositories', owner, repo, 'pullrequests/?state=merged,open&pagelen=' + this._maxPageLength);
 
 	var request = function(url) {
 		return this
