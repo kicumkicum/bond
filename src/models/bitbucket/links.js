@@ -9,7 +9,6 @@ goog.require('models.Abstract');
  */
 models.bitbucket.Links = function(data) {
 	goog.base(this, data);
-	console.log(data);
 };
 goog.inherits(models.bitbucket.Links, models.Abstract);
 
@@ -63,6 +62,94 @@ models.bitbucket.Links.prototype.parse = function(data) {
 
 
 /**
+ * @return {Object}
+ */
+models.bitbucket.Links.prototype.toObject = function() {
+	var obj = {};
+
+	if (this.html) {
+		obj['html'] = {
+			'href': this.html.href
+		};
+	}
+	if (this.avatar) {
+		obj['avatar'] = {
+			'href': this.avatar.href
+		};
+	}
+	if (this.branches) {
+		obj['branches'] = {
+			'href': this.branches.href
+		};
+	}
+	if (this.clone) {
+		obj['clone'] = this.clone.map(function(item) {
+			return {
+				'href': item.href,
+				'name': item.name
+			};
+		});
+	}
+	if (this.commits) {
+		obj['commits'] = {
+			'href': this.commits.href
+		};
+	}
+	if (this.downloads) {
+		obj['downloads'] = {
+			'href': this.downloads.href
+		};
+	}
+	if (this.forks) {
+		obj['forks'] = {
+			'href': this.forks.href
+		};
+	}
+	if (this.hooks) {
+		obj['hooks'] = {
+			'href': this.hooks.href
+		};
+	}
+	if (this.pullrequests) {
+		obj['pullrequests'] = {
+			'href': this.pullrequests.href
+		};
+	}
+	if (this.self) {
+		obj['self'] = {
+			'href': this.self.href
+		};
+	}
+	if (this.tags) {
+		obj['tags'] = {
+			'href': this.tags.href
+		};
+	}
+	if (this.watchers) {
+		obj['watchers'] = {
+			'href': this.watchers.href
+		};
+	}
+
+	return obj;
+};
+
+
+/**
+ * @param {string} key
+ * @return {?string}
+ */
+models.bitbucket.Links.prototype.getHref = function(key) {
+	var item = this.toObject()[key];
+	if (item) {
+		return item['href'];
+	} else {
+		return null;
+	}
+};
+
+
+/**
  * @param {Object} link
  * @return {Object}
  * @private
@@ -72,4 +159,3 @@ models.bitbucket.Links.prototype._parseHref = function(link) {
 		href: link['href']
 	};
 };
-
