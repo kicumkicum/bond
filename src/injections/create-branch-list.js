@@ -1,11 +1,21 @@
-var addCreateBranchButton = function(issue, bitbucketInfo) {
-	var sidebarElement = document.getElementById('sidebar');
-	var title = document.createElement('a');
+/**
+ * @param {string} issue
+ * @param {service.Syncer.BitbucketInfo} bitbucketInfo
+ */
+var addBranchList = function(issue, bitbucketInfo) {
+	var branchList = document.createElement('div');
+	var href = 'https://bitbucket.org/' + bitbucketInfo['owner'] + '/' + bitbucketInfo['repo'] + '/branch';
 
-	title.innerText = 'Create branch';
-	title.href = 'https://bitbucket.org/' + bitbucketInfo['owner'] + '/' + bitbucketInfo['repo'] + '/branch';
+	branchList.innerHTML =
+		'<div id="branch-list">' +
+			'<div class="contextual">' +
+				'<a href="' + href + '">Create branch</a>' +
+			'</div>' +
+			'<h3>Branches (0)</h3>' +
+		'</div>';
 
-	sidebarElement.appendChild(title);
+	var sideBarElement = document.getElementById('sidebar');
+	sideBarElement.appendChild(branchList);
 };
 
-addCreateBranchButton(window['issue'], window['bitbucketInfo']);
+addBranchList(window['issue'], window['bitbucketInfo']);
