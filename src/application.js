@@ -80,7 +80,7 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
 			.getRedmineProjectId(url)
 			.then(this._loadData.bind(this, issue))
 			.then(function() {
-				this._injectCreateBranchButton(tabId, issue, (this._data[issue] || {}).bitbucketInfo);
+				this._injectCreateBranchButton(tabId, issue, (this._data[issue] || {}).bitbucketInfo, (this._data[issue] || {}).branches);
 				setTimeout(function() {
 					this._addPullRequestsList(tabId, url);
 				}.bind(this), 300);
@@ -101,13 +101,6 @@ Application.prototype._onTabUpdate = function(tabId, changeInfo, tab) {
  * @protected
  */
 Application.prototype._addPullRequestsList = function(tabId, url) {
-	chrome.tabs.executeScript(tabId, {file: '/src/injections/create-pull-request-list.js'}, function() {
-		if (chrome.extension.lastError) {
-			var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-			console.log(message);
-		}
-	});
-
 	var ticket = utils.parser.getTicket(url);
 	return this._injectPullRequestsToList(tabId, this._data[ticket] || {});
 };
@@ -143,9 +136,9 @@ Application.prototype._injectPullRequestsToList = function(tabId, tabData) {
  * @param {service.Syncer.BitbucketInfo} bitbucketInfo
  * @private
  */
-Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbucketInfo) {
+Application.prototype._injectCreateBranchButton = function(tabId, issue, bitbucketInfo, branches) {
 	chrome.tabs.executeScript(tabId, {
-		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo)
+		code: 'var issue = ' + issue + ', bitbucketInfo = ' + JSON.stringify(bitbucketInfo) + ', branches = ' + JSON.stringify(branches)
 	}, function() {
 		chrome.tabs.executeScript(tabId, {
 			file: '/src/injections/create-branch-list.js'

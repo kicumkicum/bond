@@ -1,17 +1,25 @@
 /**
  * @param {Array.<models.bitbucket.PullRequest>} pullrequests
  */
-var addPullrequests = function(pullrequests) {
-	if (!document.getElementById('sidebar').lastChild.innerText) {
-		pullrequests.forEach(addPullrequest);
-	}
+var addPullrequestList = function(pullrequests) {
+	var pullrequestList = document.createElement('div');
+
+	pullrequestList.innerHTML =
+		'<div id="pullrequest-list">' +
+		'<h3>Pullrequests (' + pullrequests.length + ')</h3>' +
+		'</div>';
+
+	var sideBarElement = document.getElementById('sidebar');
+	sideBarElement.appendChild(pullrequestList);
+
+	pullrequests.forEach(appendPullrequest);
 };
 
 
 /**
  * @param {models.bitbucket.PullRequest} pullrequest
  */
-var addPullrequest = function(pullrequest) {
+var appendPullrequest = function(pullrequest) {
 	var a = document.createElement('a');
 	var li = document.createElement('li');
 	var div = document.createElement('div');
@@ -39,9 +47,11 @@ var addPullrequest = function(pullrequest) {
 	a.href = pullrequest.links.html.href;
 
 	li.style.lineHeight = '1.0';
+	li.style.listStyleType = 'none';
 	li.appendChild(div);
 	li.appendChild(a);
-	document.getElementById('sidebar').lastChild.appendChild(li);
+	document.getElementById('pullrequest-list').appendChild(li);
 };
 
-addPullrequests(window.pullrequests);
+
+addPullrequestList(window['pullrequests']);
