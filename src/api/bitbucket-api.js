@@ -51,7 +51,13 @@ api.Bitbucket.prototype.cyclicalRequest = function(url) {
 api.Bitbucket.prototype.getBranches = function(owner, repoName) {
 	return this.getRepo(owner, repoName)
 		.then(function(repo) {
-			return this.cyclicalRequest(repo.links.branches.href);
+			var url = repo.links.getHref('branches');
+
+			if (url) {
+				return this.cyclicalRequest(url);
+			} else {
+				return Promise.reject();
+			}
 		}.bind(this));
 };
 
