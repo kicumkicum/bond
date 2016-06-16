@@ -14,18 +14,17 @@ goog.require('utils.parser');
  */
 api.Bitbucket = function() {
 	this._url = 'https://bitbucket.org/api/2.0/';
-	this._realUrl = 'https://bitbucket.org';
 	this._maxPageLength = 50;
+	this._cachedPulls = [];
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
 /**
  * @param {string} url
- * @param {Object} headers
  * @return {IThenable<Array<*>>}
  */
-api.Bitbucket.prototype.cyclicalRequest = function(url, headers) {
+api.Bitbucket.prototype.cyclicalRequest = function(url) {
 	var result = [];
 	var request = function(url) {
 		return this._request(url)
@@ -58,16 +57,17 @@ api.Bitbucket.prototype.getBranches = function(owner, repoName) {
 
 
 /**
+ * @param {string} owner
+ * @param {string} repo
  * @return {IThenable.<models.bitbucket.PullRequest>}
  */
 api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
-	var url = this._url + 'repositories/' + owner + '/' + repo + '/pullrequests/?state=merged,open' +
-		'&pagelen=' + this._maxPageLength;
-	var httpHeader = {'Authorization': 'Basic ' + config.token};
+	var url = this._createUrl(
+		this._url, 'repositories', owner, repo, 'pullrequests/?state=merged,open&pagelen=', String(this._maxPageLength));
 
 	var request = function(url) {
 		return this
-			.request(url, httpHeader)
+			._request(url)
 			.then(function(response) {
 				var responsePulls = response['values'].map(function(pull) {
 					return new models.bitbucket.PullRequest(pull);
@@ -88,7 +88,7 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 			}.bind(this))
 			.then(function(url) {
 				if (url) {
-					return request(url, httpHeader);
+					return request(url);
 				} else {
 					return this._cachedPulls;
 				}
@@ -104,10 +104,8 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
  * @return {IThenable<Array>}
  */
 api.Bitbucket.prototype.getRepositories = function(owner) {
-	var url = this._url + 'teams/' + owner + '/repositories';
-	var httpHeader = {'Authorization': 'Basic ' + config.token};
-
-	return this.cyclicalRequest(url, httpHeader)
+	var url = this._createUrl(this._url, 'teams', owner, 'repositories');
+	return this.cyclicalRequest(url)
 		.then(function(response) {
 			return response.map(function(repo) {
 				return new models.bitbucket.Repository(repo);
@@ -144,4 +142,4 @@ api.Bitbucket.prototype._request = function(url) {
 /**
  * @type {Array<models.bitbucket.PullRequest>}
  */
-api.Bitbucket.prototype._cachedPulls = [];
+api.Bitbucket.prototype._cachedPulls;
