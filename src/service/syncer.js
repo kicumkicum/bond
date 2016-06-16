@@ -46,10 +46,19 @@ service.Syncer.prototype.getRedMineTicketUrl = function(bitbucketUrl) {
 
 
 /**
+ * @param {string} owner
+ * @param {string} repo
+ * @param {string=} opt_issue
  * @return {IThenable.<Array.<models.bitbucket.Branch>>}
  */
-service.Syncer.prototype.getBitbucketBranches = function(owner, repo) {
-	return this._api.bitbucket.getBranches(owner, repo);
+service.Syncer.prototype.getBitbucketBranches = function(owner, repo, opt_issue) {
+	return this._api.bitbucket
+		.getBranches(owner, repo)
+		.then(function(branches) {
+			return branches.filter(function(branch) {
+				return branch.name.indexOf(opt_issue || '') > -1;
+			});
+		});
 };
 
 

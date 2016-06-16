@@ -26,6 +26,7 @@ var Application = function() {
 /**
  * @param {number} ticket
  * @param {string} redmineProjectId
+ * @return {IThenable<Application.TabData>}
  * @protected
  */
 Application.prototype._loadData = function(ticket, redmineProjectId) {
@@ -38,8 +39,8 @@ Application.prototype._loadData = function(ticket, redmineProjectId) {
 
 			return Promise.all([
 				this._services.syncer.getBitbucketPullRequests({ticket: ticket}, bitbucketInfo),
-				this._services.syncer.getBitbucketBranches(bitbucketInfo.owner, bitbucketInfo.repo)
-			])
+				this._services.syncer.getBitbucketBranches(bitbucketInfo.owner, bitbucketInfo.repo, ticket.toString())
+			]);
 		}.bind(this))
 		.then(function(result) {
 			this._data[ticket].pullrequests = result[0];
@@ -178,12 +179,6 @@ Application.prototype._highlightTicketNumber = function(tabId) {
 
 
 /**
- * @type {Object.<string, ?Application.TabData>}
- */
-Application.prototype._tabs;
-
-
-/**
  * @type {{
  *      syncer: service.Syncer
  * }}
@@ -200,16 +195,16 @@ Application.prototype._providers;
 
 
 /**
- * @type {Object.<string, service.Syncer.BitbucketInfo>}
+ * @type {Application.TabData}
  */
 Application.prototype._data;
 
 
 /**
- * @typedef {{
+ * @typedef {Object.<string, {
  *      ticket: (string|undefined),
  *      branches: (Array.<string>|undefined),
  *      pullrequests: (Array.<string>|undefined)
- * }}
+ * }>}
  */
 Application.TabData;
