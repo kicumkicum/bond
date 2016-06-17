@@ -1,4 +1,4 @@
-# v0.4.0 ()
+# v0.4.0 (18.06.2016)
 
 ## Feature
 * [#38](https://github.com/kicumkicum/bond/issues/38)
