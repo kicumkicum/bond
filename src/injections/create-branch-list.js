@@ -30,17 +30,8 @@ var appendBranch = function(branch) {
 	var li = document.createElement('li');
 	var div = document.createElement('div');
 
-	var statusColor = '';
-	if (branch['heads']) {
-		if (branch['heads'].length) {
-			statusColor = 'blue';
-		} else {
-			statusColor = 'red';
-		}
-	}
-
 	div.style.cssText = 'float: left; width: 0.5em; height: 0.5em; border-radius: 1em; margin-top: 0.25em; margin-right: 0.5em';
-	div.style.backgroundColor = statusColor;
+	div.style.backgroundColor = 'blue';
 
 	var linkText = document.createTextNode(branch.name);
 	a.appendChild(linkText);
