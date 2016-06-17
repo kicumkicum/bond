@@ -1,3 +1,13 @@
+# v0.4.0 ()
+
+## Feature
+* [#38](https://github.com/kicumkicum/bond/issues/38)
+Get branches from bitbucket api
+* [#39](https://github.com/kicumkicum/bond/issues/39)
+Show branches in redmine issue
+* [#55](https://github.com/kicumkicum/bond/issues/55)
+Show only opened branches in redmine issue
+
 # v0.3.0 (11.06.2016)
 
 ## Feature
