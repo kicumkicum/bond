@@ -8,6 +8,10 @@ Show branches in redmine issue
 * [#55](https://github.com/kicumkicum/bond/issues/55)
 Show only opened branches in redmine issue
 
+## Improvement
+* [#50](https://github.com/kicumkicum/bond/issues/50)
+Add configuration for editorconfig 
+
 # v0.3.0 (11.06.2016)
 
 ## Feature
