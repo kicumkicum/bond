@@ -44,7 +44,9 @@ Application.prototype._loadData = function(ticket, redmineProjectId) {
 		}.bind(this))
 		.then(function(result) {
 			this._data[ticket].pullrequests = result[0];
-			this._data[ticket].branches = result[1];
+			this._data[ticket].branches = result[1].filter(function(branch) {
+				return !branch.heads || branch.heads.length;
+			});
 
 			return this._data[ticket];
 		}.bind(this));
