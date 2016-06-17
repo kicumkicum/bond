@@ -82,3 +82,23 @@ api.AbstractApi.prototype.getAllElementsWithAttribute = function(attribute, opt_
 
 	return matchingElements;
 };
+
+
+/**
+ * @param {...string} var_args
+ * @return {string}
+ * @protected
+ */
+api.AbstractApi.prototype._createUrl = function(var_args) {
+	var url = Array.prototype.join.call(arguments, '/');
+	url = url.replace('//', '/');
+
+	while (url.indexOf('//') > -1) {
+		url = url.replace('//', '/');
+	}
+
+	url = url.replace('http:/', 'http://');
+	url = url.replace('https:/', 'https://');
+
+	return url;
+};

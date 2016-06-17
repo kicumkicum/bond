@@ -7,27 +7,27 @@ goog.require('models.bitbucket.Repository');
 goog.require('utils.parser');
 
 
+
 /**
  * @constructor
  * @extends {api.AbstractApi}
  */
 api.Bitbucket = function() {
 	this._url = 'https://bitbucket.org/api/2.0/';
-	this._realUrl = 'https://bitbucket.org';
 	this._maxPageLength = 50;
+	this._cachedPulls = [];
 };
 goog.inherits(api.Bitbucket, api.AbstractApi);
 
 
 /**
  * @param {string} url
- * @param {Object} headers
  * @return {IThenable<Array<*>>}
  */
-api.Bitbucket.prototype.cyclicalRequest = function(url, headers) {
+api.Bitbucket.prototype.cyclicalRequest = function(url) {
 	var result = [];
 	var request = function(url) {
-		return this.request(url, headers)
+		return this._request(url)
 			.then(function(response) {
 				result = result.concat(response['values']);
 
@@ -45,81 +45,35 @@ api.Bitbucket.prototype.cyclicalRequest = function(url, headers) {
 
 /**
  * @param {string} owner
- * @param {string} repo
+ * @param {string} repoName
  * @return {IThenable.<Array.<models.bitbucket.Branch>>}
  */
-api.Bitbucket.prototype.getBranches = function(owner, repo) {
-	var getBranches = function(tabId) {
-		chrome.tabs.executeScript(tabId, {file: "/src/injections/get-branches-from-page.js"}, function() {
-			if (chrome.extension.lastError) {
-				var message = 'There was an error injecting script : \n' + chrome.extension.lastError.message;
-				console.log('error', message);
+api.Bitbucket.prototype.getBranches = function(owner, repoName) {
+	return this.getRepo(owner, repoName)
+		.then(function(repo) {
+			var url = repo.links.getHref('branches');
+
+			if (url) {
+				return this.cyclicalRequest(url);
+			} else {
+				return Promise.reject();
 			}
-		});
-	};
-
-	//todo http://stackoverflow.com/questions/11684454/getting-the-source-html-of-the-current-page-from-chrome-extension
-	var url = utils.parser.joinUrl(this._realUrl, owner, repo, 'branches');
-
-	//window.open(url);
-	//chrome.tabs.query({'url': url}, function(tabs) {
-	//	getBranches(tabs[0].id);
-	//});
-
-	return this.getHTML(url)
-		.then(function(html) {
-			return utils.parser.getBranchesFromHTML(html);
-		})
-		.then(function(branchesNames) {
-			return branchesNames.map(function(branchName) {
-				var url = utils.parser.joinUrl(this._realUrl, owner, repo, 'branch', branchName);
-				return new models.bitbucket.Branch({
-					name: branchName,
-					links: {
-						html: {
-							href: url
-						}
-					}
-				});
-			}, this);
 		}.bind(this));
-	//chrome.cookies.getAll({domain: 'bitbucket.org'}, function(cookies) {
-	//	console.log(cookies);
-	//	for (var i = 0; i < cookies.length; i++) {
-	//		var newCookie = {
-	//			'url': "http" + (cookies[i].secure ? "s" : "") + "://" + cookies[i].domain + cookies[i].path,
-	//			'name': cookies[i].name,
-	//			'value': cookies[i].value,
-	//			'domain': cookies[i].domain,
-	//			'path': cookies[i].path,
-	//			'secure': cookies[i].secure,
-	//			'httpOnly': cookies[i].httpOnly,
-	//			'expirationDate': cookies[i].expirationDate,
-	//			'storeId': cookies[i].storeId
-	//		};
-	//		chrome.cookies.set(newCookie);
-	//	}
-	//	return this.getHTML(url)
-	//		.then(function(html) {
-	//			console.log(html);
-	//			return this.getAllElementsWithAttribute('data-branch-name', doc);
-			//}.bind(this));
-	//}.bind(this));
-
-
 };
 
+
 /**
+ * @param {string} owner
+ * @param {string} repo
  * @return {IThenable.<models.bitbucket.PullRequest>}
  */
 api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
-	var url = this._url + 'repositories/' + owner + '/' + repo + '/pullrequests/?state=merged,open' +
-		'&pagelen=' + this._maxPageLength;
-	var httpHeader = {'Authorization': 'Basic ' + config.token};
+	var url = this._createUrl(
+		this._url, 'repositories', owner, repo, 'pullrequests/?state=merged,open&pagelen=' + this._maxPageLength);
 
 	var request = function(url) {
 		return this
-			.request(url, httpHeader)
+			._request(url)
 			.then(function(response) {
 				var responsePulls = response['values'].map(function(pull) {
 					return new models.bitbucket.PullRequest(pull);
@@ -129,7 +83,7 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 				responsePulls = responsePulls.filter(function(responsePull) {
 					return this._cachedPulls.every(function(pull) {
 						return pull.id !== responsePull.id;
-					})
+					});
 				}, this);
 
 				this._cachedPulls = this._cachedPulls.concat(responsePulls);
@@ -140,7 +94,7 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
 			}.bind(this))
 			.then(function(url) {
 				if (url) {
-					return request(url, httpHeader);
+					return request(url);
 				} else {
 					return this._cachedPulls;
 				}
@@ -156,10 +110,8 @@ api.Bitbucket.prototype.getPullRequests = function(owner, repo) {
  * @return {IThenable<Array>}
  */
 api.Bitbucket.prototype.getRepositories = function(owner) {
-	var url = this._url + 'teams/' + owner + '/repositories';
-	var httpHeader = {'Authorization': 'Basic ' + config.token};
-
-	return this.cyclicalRequest(url, httpHeader)
+	var url = this._createUrl(this._url, 'teams', owner, 'repositories');
+	return this.cyclicalRequest(url)
 		.then(function(response) {
 			return response.map(function(repo) {
 				return new models.bitbucket.Repository(repo);
@@ -169,6 +121,31 @@ api.Bitbucket.prototype.getRepositories = function(owner) {
 
 
 /**
+ * @param {string} owner
+ * @param {string} repo
+ * @return {IThenable<models.bitbucket.Repository>}
+ */
+api.Bitbucket.prototype.getRepo = function(owner, repo) {
+	var url = this._createUrl(this._url, 'repositories', owner, repo);
+	return this._request(url)
+		.then(function(data) {
+			return new models.bitbucket.Repository(data);
+		});
+};
+
+
+/**
+ * @param {string} url
+ * @return {IThenable<*>}
+ * @private
+ */
+api.Bitbucket.prototype._request = function(url) {
+	var httpHeader = {'Authorization': 'Basic ' + config.token};
+	return this.request(url, httpHeader);
+};
+
+
+/**
  * @type {Array<models.bitbucket.PullRequest>}
  */
-api.Bitbucket.prototype._cachedPulls = [];
+api.Bitbucket.prototype._cachedPulls;

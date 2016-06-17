@@ -5,6 +5,8 @@
       "config.js",
       "/src/models/abstract.js",
       "/src/models/bitbucket/links.js",
+      "/src/models/bitbucket/owner.js",
+      "/src/models/bitbucket/project.js",
       "/src/models/bitbucket/repository.js",
       "/src/models/bitbucket/pull-request.js",
       "/src/models/bitbucket/branch.js",
@@ -37,5 +39,5 @@
     "storage",
     "tabs"
   ],
-  "version": "0.3.0"
+  "version": "0.4.0"
 }
